@@ -1,0 +1,242 @@
+RELEASES for HS Library
+
+==============================================================================
+
+
+rel-v4.0-1.0.0
+	(2011/10/19)
+	
+	This is the first .NET 4.0 release of the library with MVC 3. It is equivalent to 3.5-1.33.0.
+	
+
+rel-v4.0-1.1.0
+	(2011/10/20)
+	
+	Added an interface around SendMail so that it can be mocked out during testing.
+	
+
+rel-v4.0-1.2.0
+	(2011/10/21)
+	
+	Added a few new extensions (like SingleOrThrow()), modified FirstOrThrow() to return the object it 
+	operates on to support method chaining, and added the AutoRollbackTestBase class to support the 
+	AutoRollbackFixture attribute.
+	
+
+rel-v4.0-1.2.1
+	(2011/10/21)
+	
+	Added IFileSystem.GetFiles(), that doesn't take a filter.
+	
+
+rel-v4.0-1.3.0
+	(2011/10/26)
+	
+	Added Get<T> methods for dictionaries, route data and session.
+	
+	
+rel-v4.0-1.4.0
+	(2011/10/28)
+	
+	Added model binders for Enums and lists of integers.
+	
+	
+rel-v4.0-1.5.0
+	(2011/11/01)
+	
+	Added IEmail and MailPlusWrapper.
+	
+	
+rel-v4.0-1.5.1
+	(2011/11/01)
+	
+	Made IEmail easier to mock.
+	
+	
+rel-v4.0-1.6.0
+	(2011/11/11)
+	
+	Added ToYesNo() and ViewDataExtensions.
+	
+	
+rel-v4.0-1.7.0
+	(2011/11/29)
+	
+	Added FakeControllerContext and some optional params to the fake request.
+	
+	
+rel-v4.0-1.7.1
+	(2011/11/29)
+	
+	Added ability to mock out PhysicalAppPath in a fake HTTP request.
+	
+	
+rel-v4.0-1.7.2
+	(2011/11/29)
+	
+	Added some optional params to FakeHttpContext and FakeControllerContext to simplify mocking.
+	
+	
+rel-v4.0-1.8.0
+	(2011/11/30)
+	
+	Added IUrlHelper and UrlHelperWrapper.
+	
+		
+rel-v4.0-1.8.1 (SR)
+	(2011/12/07, from /branches/rb-v.3.5/)
+	Reintegrated rel-v3.5-1.34.0
+	Changed the line number to correspond to the file line number in the CSV Data Parser
+	
+		
+rel-v4.0-1.9.0 (SPJ)
+	(2012/01/03)
+	Changed the .GetJsonResultData<> helper to support Content results containing JSON strings,
+	to support using JSON.NET rather than the built-in serializer.
+	
+		
+rel-v4.0-1.10.0 (SPJ)
+	(2012/02/29)
+	+ Implemented the "Items" property for the fake HTTP context.
+	+ Added XML documentation files, so users of the library will see intellisense
+		
+	
+rel-v4.0-1.19.0 (SPJ)
+	(2013/12/02)
+	+ Integrated the Payments library into the main HS library
+	+ Added Refund support for the PayFlowPro [i.e. PayPal Payments Pro] gateway. Not supported for other gateways yet.
+		
+	
+rel-v4.0-1.19.1 (SPJ)
+	(2013/12/05)
+	+ Added the debugging symbols to the export package
+	+ Added an ability to Payments to verify the configuration data for each gateway
+		
+	
+rel-v4.0-1.19.2 (SPJ)
+	(2013/12/05)
+	+ Added log4net as a project reference to Payments. This is needed for the PayPal gateway.
+		
+	
+rel-v4.0-1.19.3 (SPJ)
+	(2013/12/05)
+	+ Added log4net to the binary release tag
+	
+rel-v4.0-1.20.0 (SPJ)
+	(2013/12/10)
+	+ Added new validators for validating decimals
+	
+rel-v4.0-1.20.1 (SPJ)
+	(2013/12/10)
+	+ Fixed short circuit regression in ValidatePresence from last commit
+	
+rel-v4.0-1.20.2 (SPJ)
+	(2013/12/10)
+	+ Fixed defect in ValidateDecimal
+	
+rel-v4.0-1.21.0 (SPJ)
+	(2013/12/11)
+	+ Added GatewayType to PaymentBase
+	
+rel-v4.0-1.22.0 (SPJ)
+	(2013/12/11)
+	+ Added decimal.WithoutTrailingZeroes()
+	
+rel-v4.0-1.22.1 (SPJ)
+	(2013/12/30)
+	+ Added string.ToSingleQuotedJavascriptString() to fix bugs in ToJavascriptString()
+	
+rel-v4.0-1.23.0 (SPJ)
+	(2014/01/24)
+	+ Added string.SetQuerystringParam() and string.ToTuple()
+	
+rel-v4.0-1.24.0 (CAA)
+	(2014/10/09)
+	+ [22313] Added logic in PayFlowPro class to submit partial refund amounts
+	+ [22262] Modified WebErrors to utilize a collection of RegEx to allow field omissions in error report
+	
+rel-v4.0-1.25.0 (CAA)
+	(2014/10/09)
+	+ [22262] Omit fields from the report that exist in the Exception.Data collection (oversight from previous release)
+	
+rel-v4.0-1.25.1 (SPJ)
+	(2014/10/13)
+	+ [22262] Made the list of regexs that are excluded from error reports case insensitive
+	+ Added SupportsRefunds to PaymentBase
+
+rel-v4.0-1.25.2 (SPJ)
+	(2014/10/13)
+	+ [22262] Fixed case insensitivity - was incorrectly implemented last commit
+
+rel-v4.0-1.26.0 (CAA)
+	(2014/11/10)
+	+ [22812] Allow email settings to be passed into MailPlus as a NameValueCollection
+	
+rel-v4.0-1.26.1 (CAA)
+	(2014/11/18)
+	+ Dispose of email attachments after message has been sent (MailPlus)
+
+rel-v4.0-1.26.2 (CAA)
+	(2014/11/19)
+	+ Force loading of defaults regardless of where settings are coming from
+	
+rel-v4.0-1.26.3 (CAA)
+	(2014/11/19)
+	+ Clear out email TO, ReplyToList, CC, and BCC after each email is sent.
+	
+rel-v4.0-1.26.4 (CAA)
+	(2014/12/03)
+	+ Fix an issue with the 'TO' recipient not being set if EmailOverride was set to false
+
+rel-v4.0-1.26.5 (CAA)
+	(2014/12/05)
+	+ FB23016 - Force encoding of email subject and body in MailPlus to UTF8
+	
+rel-v4.0-1.27.0 (SAR)
+	(2015/02/05)
+	+ FB23319 - Enabled the UrlReferrer on the FakeHttpRequest
+
+rel-v4.0-1.28.0 (MDG)
+	(2015/07/30)
+	+ FB24363 - Added DirectoryExists and CreateDirectory to IFileSystem interface and implementation
+	
+rel-v4.0-1.29.0 (CAA)
+	(2015/11/06)
+	+ FB26399 - Added new Moolah gateway type for usage in LearningBuilder/Stubbed out actual Gateway class for later usage.
+	
+rel-v4.0-1.29.1 (CAA)
+	(2015/11/17)
+	+ FB26400 - Populated the code to transmit refunds to Moolah
+
+rel-v4.0-1.29.2 (CAA)
+	(2015/11/17)
+	+ FB26400 - Needed to split the response on two separate delimiters.
+	
+rel-v4.0-1.30.0 (MDG)
+	(2016/02/02)
+	+ FB27902 - Make ToEnum and ToNullableEnum ignore case by default (but still have option to turn on if necessary)
+
+rel-v4.0-1.31.0 (MDG)
+	(2016/22/03)
+	+ FB28709 - Adding error code field to Message
+
+rel-v4.0-1.32.0 (SAR)
+	(2016/05/04)
+	+ FB29435 - Added Friendly message to payment module
+
+rel-v4.0-1.33.0 (CAA)
+	(2016/05/05)
+	+ FB29508 - Output the entire User Agent string in Error emails instead of the 'Browser' (it wasn't reporting correctly anymore)
+	
+rel-v4.0-1.34.0 (CAA)
+	(2016/05/19)
+	+ FB29662 - Handle null request objects so we can still send emails in the event we don't have one (from LB)	
+	
+rel-v4.0-1.34.1 (SPJ)
+	(2016/11/17)
+	+ FB29662 - Handle null request objects so we can still send emails in the event we don't have one (from LB) [FIX TO COMMIT IN LAST REV]
+	
+rel-v4.0-2.0.0 (SPJ)
+	(2017/1/18)
+	+ FB32173 - Removed all Payment related stuff (to move it into LB proper)
+	

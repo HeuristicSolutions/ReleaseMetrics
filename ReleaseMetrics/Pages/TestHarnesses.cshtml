@@ -1,0 +1,337 @@
+﻿@page
+@{
+    ViewData["Title"] = "Test Harnesses";
+}
+
+<style type="text/css">
+	input.releaseNum { max-width: 125px !important; }
+	.description { margin-bottom: 10px; }
+
+	#ajaxResults {
+		position: fixed;
+		width: 48%;
+		bottom: 10px;
+		right: 10px;
+		top: 120px;
+		height: 600px;
+	}
+
+	.api-name {
+		font-family: 'Courier New'
+	}
+</style>
+
+<div id="app">
+	<div>
+		<h1>Test Harnesses</h1>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/Releases/List</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database and returns a list of Releases.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/Releases/List">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/Releases/Get</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database and returns details about a specific Release.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/Releases/Get?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/TimeEntries/Get</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database and returns a summary of a specific time entry.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control js-bind-id" placeholder="ML:12345 or FB:34567" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/TimeEntries/Get?id={id}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/TimeEntries/GetForRelease</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database for time entries associated with a specific Release and then returns a list of summary objects,
+						correlating them with the latest story data from the Jira proxy.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/TimeEntries/GetForRelease?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/TimeEntries/ValidateEntriesForRelease</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database for time entries and then returns the results of the validation and consistency checks.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/TimeEntries/ValidateEntriesForRelease?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/WorkItems/Get</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local cache of work items.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control workItemId js-bind-id" placeholder="LB-123" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/WorkItems/Get?id={id}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/WorkItems/GetForRelease</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries the local database for all locally cached work items matching the release number.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/WorkItems/GetForRelease?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/MavenlinkTestHarness/GetAllTasksForInnovationTimeTracking</div>
+				<div class="panel-body">
+					<div class="description">
+						Calls Mavenlink to get the set of billing tasks associated with a specific Release
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/MavenlinkTestHarness/GetAllTasksForInnovationTimeTracking?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/MavenlinkTestHarness/GetAllTimeEntriesForInnovations</div>
+				<div class="panel-body">
+					<div class="description">
+						Calls Mavenlink to get all time entries associated with the billing tasks for a specific Release. Uses the local definition of the
+						Release to determine the date range to query for.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/MavenlinkTestHarness/GetAllTimeEntriesForInnovations?releaseNum={releaseNum}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/MavenlinkTestHarness/GetAllTimeEntriesInRange</div>
+				<div class="panel-body">
+					<div class="description">
+						Calls Mavenlink to get all time entries within a time range, optionally filtered by user.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control js-bind-startDate" placeholder="start: mm/dd/yyyy" />
+						<input type="text" class="form-control js-bind-endDate" placeholder="end: mm/dd/yyyy" />
+						<input type="text" class="form-control js-bind-user" placeholder="user: joe schmoe (optional)" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/MavenlinkTestHarness/GetAllTimeEntriesInRange?startDate={startDate}&endDate={endDate}&user={user}">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/JiraTestHarness/GetStory</div>
+				<div class="panel-body">
+					<div class="description">
+						Calls Jira to get the details for a specific story.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control storyId js-bind-storyId" placeholder="LB-123" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/JiraTestHarness/GetStory?storyId={storyId}">Test</button>
+						<button type="button" class="btn btn-secondary" v-on:click="autoBindAndTestApi" data-api-url="/Api/JiraTestHarness/GetStory_Raw?storyId={storyId}">Test (raw response)</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/JiraTestHarness/GetStoriesInRelease</div>
+				<div class="panel-body">
+					<div class="description">
+						Calls Jira to get all stories associated with a specific release.
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-primary" v-on:click="autoBindAndTestApi" data-api-url="/Api/JiraTestHarness/GetStoriesInRelease?releaseNum={releaseNum}">Test</button>
+						<button type="button" class="btn btn-secondary" v-on:click="autoBindAndTestApi" data-api-url="/Api/JiraTestHarness/GetStoriesInRelease_Raw?releaseNum={releaseNum}">Test (raw response)</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/JiraTestHarness/RefreshLocalJiraStoryCacheForRelease</div>
+				<div class="panel-body">
+					<div class="description">
+						Deletes the local cache of work items for the specified release and re-loads them from Jira. <b>This is a destructive test!</b>
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-danger" v-on:click="autoBindAndTestApi" data-api-url="/Api/JiraTestHarness/RefreshLocalJiraStoryCacheForRelease?releaseNum={releaseNum}" data-api-method="POST">Test</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<iframe id="ajaxResults"></iframe>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	var vueApp = new Vue({
+		el: '#app',
+
+		computed: {
+			resultDisplayStyle: function () {
+				return (this.lastError === null) ? '' : 'none';
+			},
+			errorDisplayStyle: function () {
+				return (this.lastError === null) ? 'none' : '';
+			}
+		},
+
+		methods: {
+
+			// accepts a click event. Uses the DOM to look for a data elements indicating the URL to call. 
+			// If the URL contains placeholders like "{foo}", then looks for input fields with a class like "js-bind-foo" and replaces the placeholder
+			// with the value in the textbox
+			autoBindAndTestApi: function (event) {
+				var btn = $(event.currentTarget);
+				var apiUrl = btn.data('api-url');
+				var apiMethod = btn.data('api-method') || "GET";
+
+				var placeholderRegex = /\{[-0-9a-zA-Z_]+\}/mgi;	// matches "{foo}"
+				var matches = apiUrl.match(placeholderRegex);
+
+				if (matches) {
+					var placeholderValues = {};
+					var form = btn.closest('form');
+
+					for (var i = 0; i < matches.length; i++) {
+						var placeholderWithBraces = matches[i];
+						var placeholderName = placeholderWithBraces.substring(1, placeholderWithBraces.length - 1);	// remove braces
+						var matchingField = form.find('input.js-bind-' + placeholderName);
+
+						placeholderValues[placeholderName] = matchingField.val();
+					}
+
+					var apiUrl = apiUrl.supplant(placeholderValues);
+				}
+				
+				if (apiMethod === "POST") {
+					this.makePostApiCall(apiUrl);
+				}
+				else {
+					this.makeGetApiCall(apiUrl);
+				}
+			},
+
+			clickDefaultButton: function (event) {
+				var form = $(event.currentTarget);
+				form.find(".btn-primary").click();
+			},
+
+			makeGetApiCall: function (url) {
+				var vueApp = this;
+
+				vueApp.showApiResponse('... loading with GET ...');
+
+				axios
+					.get(url)
+					.then((result) => {
+						vueApp.showApiResponse(result);
+					})
+					.catch((err) => {
+						vueApp.showApiResponse(err);
+					});
+			},
+
+			makePostApiCall: function (url) {
+				var vueApp = this;
+
+				vueApp.showApiResponse('... loading with POST ...');
+
+				axios
+					.post(url)
+					.then((result) => {
+						vueApp.showApiResponse(result);
+					})
+					.catch((err) => {
+						vueApp.showApiResponse(err);
+					});
+			},
+
+			showApiResponse: function (response) {
+				var valueToShow = response;
+
+				if (typeof response === 'string') {
+					// caller specified exactly what to show
+					valueToShow = '<pre>' + response + '</pre>';
+				}
+				else if (typeof response === 'object' && response.response) {
+					// axios response
+					valueToShow = response.response.data;
+				}
+				else {
+					// assume JSON payload
+					valueToShow = '<pre>' + JSON.stringify(response, null, 2) + '</pre>';
+				}
+
+				// using an iframe so that if we get an error back w/ full HTML document it doesn't mess up rendering rest of page
+				var iframe = document.getElementById("ajaxResults");
+				var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+				iframeDoc.write(valueToShow);
+				iframeDoc.close();
+			}
+        }
+	});
+
+	vueApp.showApiResponse("Click a button to execute an API call and the results will show up here");
+</script>
+
+

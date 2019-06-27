@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Heuristics.Library.Testing</name>
+    </assembly>
+    <members>
+        <member name="T:Heuristics.Library.Testing.AssertCollection">
+            <summary>
+            Assertion helpers that handle collections of objects.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.All``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Asserts that all items in the sequence match the predicate. (If the sequence is empty, the
+            assertion passes). 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.All``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+            Asserts that all items in the sequence match the predicate. (If the sequence is empty, the
+            assertion passes). 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.Contains``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Asserts that the sequence contains at least one item matching the predicate. This
+            is syntactic sugar for Assert.That(sequence.Any(predicate), Is.True)
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.Contains``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+            Asserts that the sequence contains at least one item matching the predicate. This
+            is syntactic sugar for Assert.That(sequence.Any(predicate), Is.True)
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.CountEquals``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.Int32)">
+            <summary>
+            Asserts against the count of sequence items matching the predicate. This is syntactic
+            sugar for Assert.That(sequence.Count(predicate), Is.EqualTo(expectedCount)), but makes
+            the code easier to read and structure.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.CountEquals``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.Int32,System.String)">
+            <summary>
+            Asserts against the count of sequence items matching the predicate. This is syntactic
+            sugar for Assert.That(sequence.Count(predicate), Is.EqualTo(expectedCount)), but makes
+            the code easier to read and structure.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.None``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Asserts that no items in the sequence match the predicate. (If the sequence is empty, the
+            assertion passes). 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertCollection.None``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.String)">
+            <summary>
+            Asserts that no items in the sequence match the predicate. (If the sequence is empty, the
+            assertion passes). 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertDictionary.Contains``2(System.Collections.Generic.IDictionary{``0,``1},``0)">
+            <summary>
+            Asserts that the dictionary contains the specified key.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertDictionary.Contains``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            Asserts that the dictionary contains the specified key and that it has the specified value.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AssertDictionary.Contains``1(System.Collections.Generic.IDictionary{``0,System.Object},``0,System.Type)">
+            <summary>
+            Asserts that the dictionary contains the specified key and that its value is of the specified type.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.AutoRollbackTestBase">
+            <summary>
+            Inheriting from this base class adds support for the AutoRollbackFixture attribute. 
+            Test fixtures decorated with this attribute will automatically start a DB transaction
+            at the start of the test and roll it back upon completion, ensuring that the test leaves
+            no permanent DB changes laying around.
+            	  
+            IMPORTANT: Inheriting from this class alone does nothing. You must decorate fixtures with
+            the AutoRollbackFixture attribute as well.
+            		 
+            IMPORTANT: If the attribute is approach is used, and the test class needs specific
+            setup or teardown methods, those methods must explicitly call base.Setup() or base.TearDown().
+            Otherwise the transaction will not be started or rolled back.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AutoRollbackTestBase.AutoRollbackTransaction">
+            <summary>
+            Returns a TransactionScope. This is designed to be called within a using{...} block
+            without an explicit commit, thus causing the transaction to automatically roll back
+            when the using{} ends and dispose is called.
+            </summary>
+        </member>
+        <member name="P:Heuristics.Library.Testing.AutoRollbackTestBase.UseAutoRollbackOnAllTests">
+            <summary>
+            Returns TRUE if the current test class, OR ANY OF ITS SUPER CLASSES, have been
+            decorated with the AutoRollbackEveryTest attribute.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AutoRollbackTestBase.Setup">
+            <summary>
+            Base class setup. If auto-rollback transactions are enabled for the entire test fixture
+            then this will start a transaction. If derived classes are implementing custom setup
+            code, this should be called FIRST so that the setup code executes inside the transaction.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.AutoRollbackTestBase.TearDown">
+            <summary>
+            Base class teardown. If auto-rollback transactions are enabled for the entire test fixture
+            then this rolls back the transaction. If derived classes are implementing custom teardown
+            code, it should probably occur AFTER this executes. Otherwise the teardown code will get
+            rolled back with the transaction.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.AutoRollbackFixtureAttribute">
+            <summary>
+            When applied to a test class that derives from HeuristicsDataTestBase, this
+            attribute will cause all tests in that fixture to be wrapped in a transaction
+            that is automatically rolled back at the conclusion of the test. As ar esult, 
+            all database changes caused by any test in that fixture will be undone in the 
+            test teardown method.
+            </summary>
+        </member>
+        <member name="P:Heuristics.Library.Testing.Data.DataTest.AutoRollbackTransaction">
+            <summary>
+            Returns a new TransactionScope object that can be used to automatically rollback data 
+            changes made during a test.
+            </summary>
+            <example>
+            using (DataTest.AutoRollbackTranscaction) { ... your test ... }
+            </example>
+        </member>
+    </members>
+</doc>

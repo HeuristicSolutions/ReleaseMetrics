@@ -1,0 +1,292 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Heuristics.Library.Mvc</name>
+    </assembly>
+    <members>
+        <member name="T:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions">
+            <summary>
+            Extensions for converting sequences of data into MultiSelectLists, for use in MVC apps.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.AddDefaultItem(System.Web.Mvc.MultiSelectList)">
+            <summary>
+            Adds a blank list item to the beginning of a select list. This can be used in method-chaining
+            scenarios to add a default item to a select list generated from an enumerable sequence. 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.AddDefaultItem(System.Web.Mvc.MultiSelectList,System.String,System.String)">
+            <summary>
+            Adds a new list item to the beginning of a select list. This can be used in method-chaining
+            scenarios to add a default item, usually with a blank value and/or test, to a select list
+            generated from an enumerable sequence. 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.SetSelectedItems(System.Web.Mvc.MultiSelectList,System.Collections.IEnumerable)">
+            <summary>
+            Sets the selected items of a select list. This is designed to be used in method chaining
+            situations.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.IEnumerable,System.String,System.String)">
+            <summary>
+            Creates a MultiSelectList from a sequence of items. The names of the properties to bind 
+            against are specified as strings.
+            </summary>
+            <param name="p_valuePropName">The name of the property to bind against for the item's value.</param>
+            <param name="p_textPropName">The name of the property to bind against for the item's text.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.IEnumerable,System.String,System.String,System.Collections.IEnumerable)">
+            <summary>
+            Creates a MultiSelectList from a sequence of items. The names of the properties to bind 
+            against are specified as strings.
+            </summary>
+            <param name="p_valuePropName">The name of the property to bind against for the item's value.</param>
+            <param name="p_textPropName">The name of the property to bind against for the item's text.</param>
+            <param name="p_selected">The value to select by default.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.Generic.IEnumerable{System.Web.Mvc.SelectListItem})">
+            <summary>
+            Converts a sequence of select list items into a MultiSelectList.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.Generic.IEnumerable{System.Web.Mvc.SelectListItem},System.Collections.IEnumerable)">
+            <summary>
+            Converts a sequence of select list items into a MultiSelectList.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList``3(System.Collections.Generic.IEnumerable{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}},System.Linq.Expressions.Expression{System.Func{``0,``2}})">
+            <summary>
+            Creates a MultiSelectList from an IEnumerable[T], using expressions to declare type-safe bindings to
+            the properties to use for the text and value.
+            </summary>
+            <param name="p_value">An expression that is evaluated to determine the select item's value.</param>
+            <param name="p_text">An expression that is evaluated to determine the select item's display text.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList``3(System.Collections.Generic.IEnumerable{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}},System.Linq.Expressions.Expression{System.Func{``0,``2}},System.Collections.IEnumerable)">
+            <summary>
+            Creates a MultiSelectList from an IEnumerable[T], using expressions to declare type-safe bindings to
+            the properties to use for the text and value.
+            </summary>
+            <param name="p_value">An expression that is evaluated to determine the select item's value.</param>
+            <param name="p_text">An expression that is evaluated to determine the select item's display text.</param>
+            <param name="p_defaultSelected">The items to select by default</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Creates a MultiSelectList from a NameValueCollection, using the item key as the select list value
+            and the item value as the select list text.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.MultiSelectListExtensions.ToMultiSelectList(System.Collections.Specialized.NameValueCollection,System.Collections.IEnumerable)">
+            <summary>
+            Creates a MultiSelectList from a NameValueCollection, using the item key as the select list value
+            and the item value as the select list text.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.Extensions.HtmlFormattingExtensions">
+            <summary>
+            Extensions that provide HTML string formatting.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.HtmlFormattingExtensions.EncodeAndTruncate(System.Web.Mvc.HtmlHelper,System.String,System.Int32)">
+            <summary>
+            Truncates the string to the specified number of characters and HTML encodes the result.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.HtmlFormattingExtensions.EncodeAndTruncate(System.Web.Mvc.HtmlHelper,System.String,System.Int32,System.String)">
+            <summary>
+            Truncates the string to the specified number of characters and HTML encodes the result.
+            If the p_value was truncated, the specified string is appended to the truncated string. 
+            Note that if the p_value is truncated, the length of the result will be 
+            <paramref name="p_maxCharacters"/> plus the length of <paramref name="appendIfTruncated"/>.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.HtmlFormattingExtensions.EncodeAndTruncateWithAlert(System.Web.Mvc.HtmlHelper,System.String,System.Int32,System.String)">
+            <summary>
+            Truncates the string to the specified number of characters and HTML encodes the result.
+            If the p_value was truncated, an elipsis is appended to the truncated p_value along with a 
+            link that, when clicked, displays the full p_value in a JS alert.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.RouteDataExtensions.Get``1(System.Web.Routing.RouteValueDictionary,System.String)">
+            <summary>
+            Returns the value at the specified key, or throws a not found error.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.RouteDataExtensions.Get``1(System.Web.Routing.RouteValueDictionary,System.String,``0)">
+            <summary>
+            Returns the value at the specified key, or the specified default value if the key is not found.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.Extensions.SelectListExtensions">
+            <summary>
+            Extensions for converting sequences of data into SelectLists, for use in MVC apps.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.AddDefaultItem(System.Web.Mvc.SelectList)">
+            <summary>
+            Adds a blank list item to the beginning of a select list. This can be used in method-chaining
+            scenarios to add a default item to a select list generated from an enumerable sequence. 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.AddDefaultItem(System.Web.Mvc.SelectList,System.String,System.String)">
+            <summary>
+            Adds a new list item to the beginning of a select list. This can be used in method-chaining
+            scenarios to add a default item, usually with a blank value and/or test, to a select list
+            generated from an enumerable sequence. 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.SetSelectedItem(System.Web.Mvc.SelectList,System.Object)">
+            <summary>
+            Sets the selected item of a select list. This is designed to be used in method chaining
+            situations.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.IEnumerable,System.String,System.String)">
+            <summary>
+            Creates a SelectList from a sequence of items. The names of the properties to bind 
+            against are specified as strings.
+            </summary>
+            <param name="p_valuePropName">The name of the property to bind against for the item's value.</param>
+            <param name="p_textPropName">The name of the property to bind against for the item's text.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.IEnumerable,System.String,System.String,System.Object)">
+            <summary>
+            Creates a SelectList from a sequence of items. The names of the properties to bind 
+            against are specified as strings.
+            </summary>
+            <param name="p_valuePropName">The name of the property to bind against for the item's value.</param>
+            <param name="p_textPropName">The name of the property to bind against for the item's text.</param>
+            <param name="p_selected">The value to select by default.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.Generic.IEnumerable{System.Web.Mvc.SelectListItem})">
+            <summary>
+            Converts a sequence of select list items into a SelectList.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.Generic.IEnumerable{System.Web.Mvc.SelectListItem},System.Object)">
+            <summary>
+            Converts a sequence of select list items into a SelectList.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList``3(System.Collections.Generic.IEnumerable{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}},System.Linq.Expressions.Expression{System.Func{``0,``2}})">
+            <summary>
+            Creates a SelectList from an IEnumerable[T], using expressions to declare type-safe bindings to
+            the properties to use for the text and value.
+            </summary>
+            <param name="p_value">An expression that is evaluated to determine the select item's value.</param>
+            <param name="p_text">An expression that is evaluated to determine the select item's display text.</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList``3(System.Collections.Generic.IEnumerable{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}},System.Linq.Expressions.Expression{System.Func{``0,``2}},System.Object)">
+            <summary>
+            Creates a SelectList from an IEnumerable[T], using expressions to declare type-safe bindings to
+            the properties to use for the text and value.
+            </summary>
+            <param name="p_value">An expression that is evaluated to determine the select item's value.</param>
+            <param name="p_text">An expression that is evaluated to determine the select item's display text.</param>
+            <param name="p_defaultSelected">The item to select by default</param>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Creates a SelectList from a NameValueCollection, using the item key as the select list value
+            and the item value as the select list text.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.SelectListExtensions.ToSelectList(System.Collections.Specialized.NameValueCollection,System.Object)">
+            <summary>
+            Creates a SelectList from a NameValueCollection, using the item key as the select list value
+            and the item value as the select list text.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.Extensions.ViewDataExtensions">
+            <summary>
+            Helper methods for working with ViewData, copied from MVC Contrib. Can be fully
+            replaced if we decide to fully import MVC Contrib. Methods return the ViewData
+            object, rather than void, to support method chaining.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.ViewDataExtensions.Add``1(System.Collections.Generic.IDictionary{System.String,System.Object},``0)">
+            <summary>
+            Adds an object using the type as the dictionary key
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.Extensions.ViewDataExtensions.GetOrFail``1(System.Collections.Generic.IDictionary{System.String,System.Object},System.String)">
+            <summary>
+            This is a convenience method for Get(), designed for usage in scenarios where the MvcContrib libraries
+            are also in use and calling Get() yields an "ambiguous call" error.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.ModelBinding.StringListModelBinder">
+            <summary>
+            If the model contains multiple values for the key, then each one is treated as a separate
+            value (similar to the default binder's behavior). Additionally, if the model contains a single 
+            value for the key, it is treated as a comma-delimited list of strings.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.ModelBinding.NullableEnumModelBinder`1">
+            <summary>
+            Binds enum values from their string representations. Returns null if the value can't be converted.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.ModelBinding.EnumModelBinder`1">
+            <summary>
+            A model binder for Enum types that utilizes the ToEnum parsing extension to convert
+            enum values from their string representations. Throws a format exception if the 
+            value can't be converted.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.ModelBinding.IntegerListModelBinder">
+            <summary>
+            If the model contains multiple values for the key, then each one is parsed as an integer
+            similar to the default binder's behavior. Additionally, if the model contains a single 
+            value for the key, it is treated as a comma-delimited list of integers.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Mvc.ModelBinding.ModelBinderBase">
+            <summary>
+            Base class for custom model binders. Provides helper methods for obtaining
+            data from the binding context.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.ModelBinding.ModelBinderBase.GetBinding(System.Web.Mvc.ModelBindingContext,System.String)">
+            <summary>
+            Given a binding context and a key, returns the string value found at that key,
+            or null if the key is not found. 
+            
+            This first tries to bind using the model name as a prefix. If a value was not 
+            found and the binding context's "FallbackToEmptyPrefix" flag is set then this 
+            will also try to bind without the model name prefix.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.ModelBinding.ModelBinderBase.GetBindingAsList(System.Web.Mvc.ModelBindingContext,System.String)">
+            <summary>
+            Given a binding context and a key, returns a list of strings associated with that 
+            key. Returns an empty list if the key is not found.
+            
+            If a single value is posted it is treated as a comma-delimited list.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.ModelBinding.ModelBinderBase.GetBindingAsIntList(System.Web.Mvc.ModelBindingContext,System.String)">
+            <summary>
+            Given a binding context and a key, returns a list of integers associated with that 
+            key. Returns an empty list if the key is not found. Non-integer values associated
+            with the specified key are ignored.
+            
+            If a single value is posted it is treated as a comma-delimited list.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Mvc.ModelBinding.ModelBinderBase.GetBindingAs``1(System.Web.Mvc.ModelBindingContext,System.String)">
+            <summary>
+            Given a binding context and a key, returns an instance of type T. If the value
+            at the specified key does not exist then default(T) is returned. Will throw
+            a parse or conversion exception if the value at the specified key cannot be
+            converted to T.
+            
+            This first tries to bind using the model name as a prefix. If a value was not 
+            found and the binding context's "FallbackToEmptyPrefix" flag is set then this 
+            will also try to bind without the model name prefix.
+            </summary>
+        </member>
+    </members>
+</doc>

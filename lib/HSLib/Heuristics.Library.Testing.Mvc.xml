@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Heuristics.Library.Testing.Mvc</name>
+    </assembly>
+    <members>
+        <member name="T:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult">
+            <summary>
+            Assertion helpers for working with ActionResult objects.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsJsonResult(System.Web.Mvc.ActionResult)">
+            <summary>
+            Asserts that the specified action is a ViewResult with the specified view name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsRedirectTo(System.Web.Mvc.ActionResult,System.String)">
+            <summary>
+            Asserts that the specified action is a RedirectResult to the specified
+            URL or a RedirectToRoute result to the specified action name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsRedirectTo(System.Web.Mvc.ActionResult,System.String,System.Object)">
+            <summary>
+            Asserts that the specified action is a RedirectToRoute result for the specified action
+            and with (at least) the specified route data.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsRedirectTo(Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerActionResult,System.String)">
+            <summary>
+            Asserts that the specified action is a Redirect p_result to the specified
+            URL or a RedirectToRoute p_result to the specified action name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsViewResult(System.Web.Mvc.ActionResult,System.String)">
+            <summary>
+            Asserts that the specified action is a ViewResult with the specified view name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsViewResult(Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerActionResult,System.String)">
+            <summary>
+            Asserts that the specified action is a ViewResult with the specified view name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.IsPartialViewResult(System.Web.Mvc.ActionResult,System.String)">
+            <summary>
+            Asserts that the specified action is a PartialViewResult with the specified view name.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.ModelEquals(System.Web.Mvc.ActionResult,System.Object)">
+            <summary>
+            Asserts that the result contains a Model and that the model is equal to the specified object.
+            This is intended mainly for simple testing scenarios; to make other assertions on the model
+            use the .GetModel() extension.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.RedirectRouteDataContains(System.Web.Mvc.ActionResult,System.String,System.Object)">
+            <summary>
+            Asserts that the specified action is a RedirectToRoute p_result and the 
+            route data contains the specified key and value.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.RedirectRouteDataContains(Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerActionResult,System.String,System.Object)">
+            <summary>
+            Asserts that the specified action is a RedirectToRoute p_result and the 
+            route data contains the specified key and value.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.AssertActionResult.ViewDataContains(System.Web.Mvc.ViewDataDictionary,System.String,System.Object)">
+            <summary>
+            Asserts that the ViewData object contains the specified key and value.
+            If the value is a type object, then the assertion is only that viewdata contains
+            an instance of that type.
+            </summary>
+            <param name="key">The key to find.</param>
+            <param name="value">
+            	The value to match. If this is a Type, then the assertion is that the value
+            	at the specified key is an instance of this type.
+            </param>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerActionResult">
+            <summary>
+            Wrapper for an ActionResult object that provides helper methods and properties to simplify
+            controller tests. 
+            
+            Use the .GetResult() extension method to extract an instance of this from a normal 
+            ActionResult instance.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerActionResult`1">
+            <summary>
+            Wrapper for an ActionResult object that provides helper methods and properties to simplify
+            controller tests.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI">
+            <summary>
+            Fluent API and helper extensions to simplify common tasks in p_controller tests, such as
+            converting an action result to a specific subtype. Chaining the fluent API methods together
+            makes it simple to establish the context for a test by configuring the p_controller context, 
+            adding temp or form data, etc.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddFormData``1(``0,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Adds the specified values to the Request.Form collection in the p_controller.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddSessionValue``1(``0,System.String,System.Object)">
+            <summary>
+            Adds the specified name/value pair to the controller's Request.Params collection.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddRequestValue``1(``0,System.String,System.Object)">
+            <summary>
+            Adds the specified name/value pair to the controller's Request.Params collection.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddFormValue``1(``0,System.String,System.Object)">
+            <summary>
+            Adds the specified name/value pair to the controller's Request.Form collection.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddQuerystringData``1(``0,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Adds the specified values to the Querystring collection in the p_controller.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddQuerystringValue``1(``0,System.String,System.Object)">
+            <summary>
+            Adds the specified name/value pair to the controller's Request.Form collection.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.AddTempData``1(``0,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Adds the specified values to the TempData collection in the p_controller.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetJsonResultData``1(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns the JSON p_result data cast to the specified model type.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetModel(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns a Model reference from the specified ActionResult, throwing an exception if it
+            is not a ViewResult.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetModel``1(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns a strongly typed Model object from the specified ViewResult.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetPartialView(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns the p_controller action cast as a PartialViewResult.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetPartialView(System.Web.Mvc.ActionResult,System.String)">
+            <summary>
+            Returns the p_controller action cast as a PartialViewResult, validating the view name in the process. 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetResult(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns a ControllerActionResult wrapper around an ActionResult, making it easier to
+            create a method chain using the p_result of a p_controller action.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetResult``1(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns a ControllerActionResult wrapper around an ActionResult, making it easier to
+            create a method chain using the p_result of a p_controller action.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetViewData(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns the ViewData collection from the specified ViewResult.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetViewResult(System.Web.Mvc.ActionResult)">
+            <summary>
+            Returns the p_controller action cast as a ViewResult.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ControllerTesting.ControllerTestingFluentAPI.GetViewResult(System.Web.Mvc.ActionResult,System.String)">
+            <summary>
+            Returns the p_controller action cast as a ViewResult, validating the view name in the process. 
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ModelBinding.ArbitraryController">
+            <summary>
+            Meaningless controller class, used in the binding test code when we need a reference to
+            a controller or controller context.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest">
+            <summary>
+            Represents a test performed against a model binder. When used in conjunction with
+            the BindingTestFluentAPI extension methods this provides a sort of DSL for writing
+            tests against MVC model binders.
+            </summary>
+        </member>
+        <member name="P:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest.ModelName">
+            <summary>
+            Gets or sets the model name, which is used when binding complex property names. For
+            instance, "Foo.Property1" would bind against a model object called "Foo".
+            </summary>
+        </member>
+        <member name="P:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest.BinderType">
+            <summary>
+            The type of model binder to test against.
+            </summary>
+        </member>
+        <member name="P:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest.Data">
+            <summary>
+            The name/value pairs that represent the data being bound against, such as a form post 
+            or querystring.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest.BindAndReturn``1">
+            <summary>
+            Creates an instance of T and uses the specified BinderType to data bind against the name/value pairs 
+            in Data.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTestFluentAPI">
+            <summary>
+            Fluent API extension methods for writing model binder tests.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTestFluentAPI.AddValue(Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest,System.String,System.Object)">
+            <summary>
+            Adds a value to the binding context. Use this to simulate the data that is being posted
+            from the HTTP form or querystring.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTestFluentAPI.AddValue(Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest,System.String,System.Object[])">
+            <summary>
+            Adds a value to the binding context. Use this to simulate the data that is being posted
+            from the HTTP form or querystring.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTestFluentAPI.BinderType``1(Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest)">
+            <summary>
+            Sets the type of model binder to use in the test.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.ModelBinding.BindingTestFluentAPI.ModelName(Heuristics.Library.Testing.Mvc.ModelBinding.BindingTest,System.String)">
+            <summary>
+            Sets the model name to use when binding against the binding context.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.Routing.AssertRoute">
+            <summary>
+            Assertion helpers for testing MVC routes.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.AssertRoute.MapsTo``1(System.String,System.Linq.Expressions.Expression{System.Func{``0,System.Web.Mvc.ActionResult}})">
+            <summary>
+            Asserts that the specified URL is routed to the specified controller action.
+            </summary>
+        </member>
+        <member name="T:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI">
+            <summary>
+            Fluent API for testing MVC routing. Derived from a similar class in MVCContrib, but modified to
+            handle test scenarios that were not supported by the original class. (For instance, I think
+            the original class in MVCContrib did a poor job of route testing URLs that contained a mixture
+            of route data and querystring data.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.Route(System.String)">
+            <summary>
+            Returns the corresponding route for the URL.  Returns null if no route was found.
+            </summary>
+            <param name="url">The app relative url to test.</param>
+            <returns>A matching <see cref="T:System.Web.Routing.RouteData" />, or null.</returns>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.Route(System.String,System.String)">
+            <summary>
+            Find the route for a URL and an Http Method because you have a method contraint on the route 
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.ShouldMapTo``1(System.Web.Routing.RouteData,System.Linq.Expressions.Expression{System.Func{``0,System.Web.Mvc.ActionResult}})">
+            <summary>
+            Asserts that the route matches the expression specified.  Checks controller, action, and any method arguments
+            into the action as route values.
+            </summary>
+            <typeparam name="TController">The controller.</typeparam>
+            <param name="routeData">The routeData to check</param>
+            <param name="action">The action to call on TController.</param>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.ShouldMapTo``1(System.String,System.Linq.Expressions.Expression{System.Func{``0,System.Web.Mvc.ActionResult}})">
+            <summary>
+            Converts the URL to matching RouteData and verifies that it will match a route with the values specified by the expression.
+            </summary>
+            <typeparam name="TController">The type of controller</typeparam>
+            <param name="relativeUrl">The ~/ based url</param>
+            <param name="action">The expression that defines what action gets called (and with which parameters)</param>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.ShouldMapTo``1(System.Web.Routing.RouteData)">
+            <summary>
+            Verifies the <see cref="T:System.Web.Routing.RouteData">routeData</see> maps to the controller type specified.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.AddActionQuerystringToRouteData(System.Web.Routing.RouteData)">
+            <summary>
+            If the RouteData's "action" value has a querystring, it is removed from the action
+            value, parsed, and added to RouteData as additional name/value pairs.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.GetValueByCaseInsensitiveKey(System.Web.Routing.RouteValueDictionary,System.String)">
+            <summary>
+            Gets a value from the specified RouteValueDictionary using a case-insensitive key search.
+            </summary>
+        </member>
+        <member name="M:Heuristics.Library.Testing.Mvc.Routing.RouteTestingFluentAPI.SetValueByCaseInsensitiveKey(System.Web.Routing.RouteValueDictionary,System.String,System.Object)">
+            <summary>
+            Sets a value to specified RouteValueDictionary using a case-insensitive key search. Returns
+            TRUE if the value was set, FALSE otherwise.
+            </summary>
+        </member>
+    </members>
+</doc>

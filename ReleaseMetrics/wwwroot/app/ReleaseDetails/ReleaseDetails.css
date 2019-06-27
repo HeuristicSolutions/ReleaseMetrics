@@ -1,0 +1,95 @@
+﻿div.validation-error {
+	color: red;
+	margin-bottom: 5px;
+}
+
+div.validation-warning {
+	color: #EE7600;
+	margin-bottom: 5px;
+}
+
+.mavenlinkTimeId {
+	color: lightgrey
+}
+
+.icon-toggle {
+	cursor: pointer;
+}
+
+.toggle-ignore-off {
+	
+}
+
+.toggle-ignore-on {
+	color: red;
+}
+
+table.time-entry-table tr.ignored-entry .project-title,
+table.time-entry-table tr.ignored-entry .task-title {
+	text-decoration: line-through;
+}
+
+table.time-entry-table tr.ignored-entry td,
+table.time-entry-table tr.ignored-entry th {
+	color: lightgray;
+}
+
+#FilterForm .form-check-label {
+	margin-right: 10px;
+}
+
+.table-nonfluid {
+	width: auto !important;
+}
+
+#Instructions .panel-footer .data-count {
+	padding-right: 20px;
+}
+
+.footer-counts { display: inline-block; }
+
+/* loading indicator overlay */
+.overlay-wrapper {
+	display: inline-block;
+	position: relative;
+}
+
+.overlay-wrapper .loading-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 188, 212, 0);
+	transition: background-color 0.5s;
+}
+
+.loading-overlay {
+	display: none;
+	position: absolute;
+}
+
+.loading-overlay:not(:required)::after {
+	animation: 1500ms linear 0s normal none infinite running spinner;
+	border-radius: 0.5em;
+	box-shadow: 1.5em 0 0 0 rgba(0, 0, 0, 0.75), 1.1em 1.1em 0 0 rgba(0, 0, 0, 0.75), 0 1.5em 0 0 rgba(0, 0, 0, 0.75), -1.1em 1.1em 0 0 rgba(0, 0, 0, 0.75), -1.5em 0 0 0 rgba(0, 0, 0, 0.75), -1.1em -1.1em 0 0 rgba(0, 0, 0, 0.75), 0 -1.5em 0 0 rgba(0, 0, 0, 0.75), 1.1em -1.1em 0 0 rgba(0, 0, 0, 0.75);
+	content: "";
+	display: inherit;
+	font-size: 10px;
+	height: 1em;
+	left: 50%;
+	margin: 0 auto;
+	overflow: visible;
+	position: absolute;
+	top: 50%;
+	width: 1em;
+	z-index: 9999;
+}
+
+.has-loading-overlay .loading-overlay {
+	display: inline-block !important;
+}
+
+.has-loading-overlay .dim-when-has-overlay {
+	opacity: 0.5;
+}

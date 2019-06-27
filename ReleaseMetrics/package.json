@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.18.0",
+    "vue-axios": "^2.1.2"
+  }
+}

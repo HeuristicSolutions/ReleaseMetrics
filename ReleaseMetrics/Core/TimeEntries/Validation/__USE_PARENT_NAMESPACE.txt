@@ -1,0 +1,4 @@
+﻿The classes in this folder should use the same namespace as the parent folder.
+
+This folder exists primarily to organize the solution folders; there's no reason for
+these classes to require a separate "using" statement.
