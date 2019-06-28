@@ -1,0 +1,101 @@
+﻿@page
+@{
+    ViewData["Title"] = "Release List";
+}
+
+<div id="app">
+	<h1>Releases</h1>
+
+	<div class="row summary-header">
+		<div class="panel panel-info">
+			<div class="panel-body">
+				Release metrics are cached locally and are based on analysis of locally-stored data. They are not automatically updated to reflect
+				changes in Jira or Mavenlink. If the source data changes, re-generate the release metrics.<br/><br/>
+				Storing the data locally makes it easier to make corrections to data, specifically the time entries, that could be difficult to 
+				push back into Mavenlink after-the-fact.
+			</div>
+			<div class="panel-footer text-right">
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#NewReleaseModal">Add Release</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Release</th>
+					<th scope="col">Summary</th>
+					<th scope="col">Started</th>
+					<th scope="col">Released</th>
+					<th scope="col">Total Points</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-if="isInitialized === false">
+					<td colspan="6" class="text-center">
+						... loading ...
+					</td>
+				</tr>
+				<tr v-for="release in releases">
+					<th scope="row">{{ release.releaseNumber }}</th>
+					<td>{{ release.notes }}</td>
+					<td class="text-nowrap">{{ release.startDate | shortDate }}</td>
+					<td class="text-nowrap">{{ release.endDate | shortDate }}</td>
+					<td>{{ release.totalPoints }}</td>
+					<td>
+						<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="modal fade" id="NewReleaseModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">New Release</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p><b>Not implemented yet</b></p>
+				<p>To add a release, add it directly to the database.</p>
+			</div>
+			<div class="modal-footer">
+				@*<button type="button" class="btn btn-primary">Save changes</button>*@
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    var vueApp = new Vue({
+        el: '#app',
+		data: {
+			isInitialized: false,
+            releases: []
+		},
+		mounted() {
+			axios
+				.get("/api/Releases/List")
+				.then(response => {
+					this.isInitialized = true;
+					this.releases = response.data;
+				});
+		},
+
+		filters: {
+			shortDate: function (date) {
+				return moment(date).format('YYYY-MM-DD');
+			}
+		}
+    });
+</script>
+
+
