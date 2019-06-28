@@ -1,0 +1,90 @@
+﻿@page
+@{
+	ViewData["Title"] = "Release Metrics";
+
+	var releaseNum = HttpContext.Request.Query["releaseNum"].ToString();
+
+	if (String.IsNullOrEmpty(releaseNum)) {
+		throw new ArgumentException("The 'releaseNum' parameter is required");
+	}
+}
+
+<div id="app">
+	<h1>Release Metrics: @releaseNum</h1>
+
+	<div class="row summary-header">
+		<div class="panel panel-info">
+			<div class="panel-body">
+				Release metrics can be processed at any time, even while the release is in progress, and will simply overwrite previously compiled metrics. <br /><br />
+
+				<b>To process release metrics:</b>
+				<ol>
+					<li>Use the "Import Time" button to import time entries</li>
+					<li>Use the "Validate Time" button to validate the time entries and create the "normalized" entries that get processed</li>
+					<li>Use the "Refresh Metrics" button to process the normalized time data and regenerate the metrics</li>
+				</ol>
+			</div>
+			<div class="panel-footer text-right">
+				<a href="/Releases/ImportTime?releaseNum=@releaseNum" class="btn btn-primary">Import Time</a>
+				<button type="button" class="btn btn-primary">Validate Time</button>
+				<button type="button" class="btn btn-primary">Metrics</button>
+			</div>
+		</div>
+	</div>
+
+	<div v-if="isInitialized === false">
+		... loading ...
+	</div>
+	
+	<div v-if="isInitialized">
+		<div class="row" v-cloak>
+
+			<p>
+				<div><b>Description</b></div>
+				<div>{{ release.notes }}</div>
+			</p>
+
+			<p>
+				<div><b>Dates</b></div>
+				<div>{{ release.startDate }} - {{ release.endDate }}</div>
+			</p>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Chore &amp; Feature Points</th>
+						<th scope="col">Defect Points</th>
+						<th scope="col">Total Points</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>TODO</td>
+						<td>TODO</td>
+						<td>{{ release.totalPoints }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+    var vueApp = new Vue({
+        el: '#app',
+		data: {
+			isInitialized: false,
+			release: null
+		},
+		mounted() {
+			axios
+				.get("/api/App/ReleaseMetrics?releaseNum=@releaseNum")
+				.then(response => {
+					this.isInitialized = true;
+					this.release = response.data;
+				});
+		}
+    });
+</script>
+
+
