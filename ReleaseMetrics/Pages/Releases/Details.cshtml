@@ -416,6 +416,7 @@
 						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=@releaseNum');
 					})
 					.then(response => {
+						$("#jiraSyncConfirmationModal").modal("hide");
 						this.statusMessage = '... refreshing page data ...';
 						app.refreshReleaseDetails();
 						app.refreshTimeEntryGrid();
