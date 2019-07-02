@@ -8,6 +8,7 @@ using ReleaseMetrics.Core.Configuration;
 using ReleaseMetrics.Core.DataModel;
 using ReleaseMetrics.Core.WorkItems.JiraApi;
 using ReleaseMetrics.Core.WorkItems;
+using ReleaseMetrics.Core;
 
 namespace ReleaseMetrics.Api {
 
@@ -46,10 +47,10 @@ namespace ReleaseMetrics.Api {
 		[HttpPost]
 		[HttpGet] // TODO remove
 		[Route("RefreshJiraCacheForRelease")]
-		public async Task<List<WorkItem>> RefreshJiraCacheForRelease(string releaseNum) {
-			var newWorkItems = await Loader.RefreshLocalJiraStoryCacheForReleaseAsync(releaseNum);
+		public async Task<ApiResult<List<WorkItem>>> RefreshJiraCacheForRelease(string releaseNum) {
+			var (workItems, messages) = await Loader.RefreshLocalJiraStoryCacheForReleaseAsync(releaseNum);
 
-			return newWorkItems;
+			return new ApiResult<List<WorkItem>>(workItems, messages);
 		}
 	}
 }

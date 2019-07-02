@@ -1,8 +1,10 @@
 ﻿using Heuristics.Library.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ReleaseMetrics.Core.DataModel;
 using ReleaseMetrics.Core.WorkItems.JiraApi;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,17 +37,25 @@ namespace ReleaseMetrics.Core.WorkItems {
 		/// can be hard to modify once a timesheet is approved, we do not expect to make local modifications to the 
 		/// story data.
 		/// </summary>
-		public async Task<List<WorkItem>> RefreshLocalJiraStoryCacheForReleaseAsync(string releaseNum) {
+		public async Task<(List<WorkItem> workItems, List<ResultMsg> messages)> RefreshLocalJiraStoryCacheForReleaseAsync(string releaseNum) {
 			var storiesInRelease = await ApiProxy.GetStoriesInReleaseAsync(releaseNum);
+			var messages = new List<ResultMsg>();
 			var workItems = new List<WorkItem>();
 
 			foreach (var story in storiesInRelease) {
-				var epic = story.EpicStoryId.IsNotNullOrEmpty()
-					? await ApiProxy.GetStoryAsync(story.EpicStoryId)
-					: null;
+				try {
+					var epic = story.EpicStoryId.IsNotNullOrEmpty()
+						? await ApiProxy.GetStoryAsync(story.EpicStoryId)
+						: null;
 
-				var newWorkItem = new WorkItem(releaseNum, story, epic);
-				workItems.Add(newWorkItem);
+					var newWorkItem = new WorkItem(releaseNum, story, epic);
+					workItems.Add(newWorkItem);
+				}
+				catch (Exception ex) {
+					messages.Add(
+						new ResultMsg($"Error processing {releaseNum}: {story.Id}: {ex.Message}", MessageType.Error)
+					);
+				}
 			}
 
 			// clear all existing work items for the release
@@ -54,12 +64,24 @@ namespace ReleaseMetrics.Core.WorkItems {
 				.Delete();
 
 			// add all the new ones
-			workItems.ForEach(
-				x => Database.WorkItems.Add(x)
-			);
-			Database.SaveChanges();
+			try {
+				workItems.ForEach(
+					x => Database.WorkItems.Add(x)
+				);
+				Database.SaveChanges();
+			}
+			catch (DbUpdateException ex) {
+				messages.Add(
+					new ResultMsg($"Error processing {releaseNum}: While saving changes: {ex.InnerException.Message}", MessageType.Error)
+				);
+			}
+			catch (Exception ex) {
+				messages.Add(
+					new ResultMsg($"Error processing {releaseNum}: While saving changes: {ex.Message}", MessageType.Error)
+				);
+			}
 
-			return workItems;
+			return (workItems, messages);
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using ReleaseMetrics.Core;
 using ReleaseMetrics.Core.Configuration;
 using ReleaseMetrics.Core.DataModel;
 using ReleaseMetrics.Core.Helpers;
@@ -56,8 +57,9 @@ namespace ReleaseMetrics.Api {
 
 		[HttpPost]
 		[Route("RefreshLocalJiraStoryCacheForRelease")]
-		public async Task<List<WorkItem>> RefreshLocalJiraStoryCacheForReleaseAsync(string releaseNum) {
-			return await Loader.RefreshLocalJiraStoryCacheForReleaseAsync(releaseNum);
+		public async Task<object> RefreshLocalJiraStoryCacheForReleaseAsync(string releaseNum) {
+			var (workItems, messages) = await Loader.RefreshLocalJiraStoryCacheForReleaseAsync(releaseNum);
+			return new { workItems = workItems, messages = messages };
 		}
 	}
 }

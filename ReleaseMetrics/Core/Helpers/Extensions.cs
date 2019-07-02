@@ -17,5 +17,9 @@ namespace ReleaseMetrics.Core.Helpers {
 			var parsedJson = JToken.Parse(json);
 			return parsedJson.ToString(Newtonsoft.Json.Formatting.Indented);
 		}
+
+		public static bool IsNullOrEmpty<T>(this IEnumerable<T> a) {
+			return (a != null) && a.Any();
+		}
 	}
 }
