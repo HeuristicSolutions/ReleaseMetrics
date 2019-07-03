@@ -105,7 +105,7 @@
 					<td>{{ entry.userName }}</td>
 					<td>{{ entry.durationMinutesOverride }}</td>
 					<td>
-						{{ entry.datePerformed | shortDate }} &nbsp; 
+						{{ entry.datePerformed | shortDate }} &nbsp;
 						<span class="mavenlinkTimeId">
 							(
 							{{ entry.id }}
@@ -251,6 +251,30 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- API error message modal -->
+	<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="messageModalTitle">Notice</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<li v-for="msg in messageModalContents">
+							<b>{{ msg.type }}</b>: {{ msg.message }}
+						</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -266,6 +290,9 @@
 			// is TRUE when the time data is being loaded, FALSE otherwise. Triggers the spinner overlay and shows the status message
 			isLoadingTimeEntries: true,
 			statusMessage: '... loading ...',
+
+			// array of ResultMsg messages to display in a modal. (See .showMessageModal())
+			messageModalContents: [],
 
 			// time entries associated with the release
 			timeEntries: [],
@@ -412,11 +439,16 @@
 				axios
 					.post('/api/WorkItems/RefreshJiraCacheForRelease?releaseNum=@releaseNum')
 					.then(response => {
+						$("#jiraSyncConfirmationModal").modal("hide");
+
+						if (response.data.messages.length > 0) {
+							this.showMessageModal(response.data.messages);
+						}
+
 						this.statusMessage = '... updating work item time allocation ...';
 						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=@releaseNum');
 					})
 					.then(response => {
-						$("#jiraSyncConfirmationModal").modal("hide");
 						this.statusMessage = '... refreshing page data ...';
 						app.refreshReleaseDetails();
 						app.refreshTimeEntryGrid();
@@ -492,6 +524,12 @@
 						this.timeEntryBeingEdited = {};
 						this.$data.timeEntriesValidated = false;
 					});
+			},
+
+			// Displays a modal alert containing a list of API call result messages
+			showMessageModal: function (errorArray) {
+				this.messageModalContents = errorArray;
+				$("#messageModal").modal("show");
 			},
 
 			// Returns TRUE if the time entry has local overrides for this entry
