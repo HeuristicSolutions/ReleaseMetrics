@@ -54,7 +54,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 				}
 				else if (effectiveMajorRelease != releaseNum) {
 					messages.Add(
-						new ResultMsg($"{story.Id} is mapped to {releaseNum}, but its primary major release is {effectiveMajorRelease}. Jira stories should only be tracked to a single major release version.", MessageType.Warning)
+						new ResultMsg($"{story.Id} is mapped to {releaseNum}, but its primary major release is {effectiveMajorRelease}. Jira stories should only be tracked to a single major release version. Skipping the local update for this release.", MessageType.Warning)
 					);
 					continue;
 				}

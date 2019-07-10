@@ -102,7 +102,12 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 		/// </summary>
 		public async Task<string> GetJiraSearchResultJsonAsync(string urlEncodedQuery) {
 			var client = new RestClient(JIRA_API_HOST);
-			var request = new RestRequest($"rest/api/2/search?jql={urlEncodedQuery}&maxResults={JIRA_MAX_RESULTS}&fields=id,key,status,epic,fixVersions,issuetype,summary,labels,customfield_10022,customfield_10018", Method.GET);
+
+			// To find ID of custom fields: https://confluence.atlassian.com/jirakb/how-to-find-id-for-custom-field-s-744522503.html
+			// customfield_10018 = Epic Link
+			// customfield_10022 = Story Points
+			// customfield_10843 = Defect Type
+			var request = new RestRequest($"rest/api/2/search?jql={urlEncodedQuery}&maxResults={JIRA_MAX_RESULTS}&fields=id,key,status,epic,fixVersions,issuetype,summary,labels,customfield_10022,customfield_10018,customfield_10843", Method.GET);
 			request.AddHeader("Authorization", this.ApiAuthHeader);
 			request.RequestFormat = DataFormat.Json;
 

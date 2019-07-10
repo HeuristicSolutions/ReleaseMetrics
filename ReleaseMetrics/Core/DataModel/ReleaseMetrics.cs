@@ -4,95 +4,84 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Heuristics.Library.Extensions;
 using Newtonsoft.Json;
+using ReleaseMetrics.Core.DataModel.EfCoreExtensions;
 using ReleaseMetrics.Core.TimeEntries;
 
 namespace ReleaseMetrics.Core.DataModel {
 
-	/// <summary>
-	/// Data is imported from the external timekeeping source and stored in the local database as a historical record. This gives us the 
-	/// ability to manually adjust the data as needed to correct typos and make other adjustments that do not impact invoicing (and thus
-	/// do not need ported back into the external source) but DO impact the processing of the data for release metrics.
-	/// </summary>
 	public class ReleaseMetrics {
 
-		/// <summary>
-		/// Indicates both the source of the record and ID in the source system, separated by a colon. For instance, an entry
-		/// imported from Mavenlink will have an ID like "ML:12345" where 12345 is the ML time entry id.
-		/// </summary>
 		[Key]
-		public string Id { get; set; }
-
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[MaxLength(25)]
 		public string ReleaseNumber { get; set; }
+
+		[SqlDefaultValue("getutcdate()")]
+		public DateTime GeneratedAt { get; set; }
+
 		public virtual Release Release { get; set; }
 
-		public string ProjectId { get; set; }
-		public string ProjectTitle { get; set; }
-		public string TaskId { get; set; }
-		public string TaskTitle { get; set; }
-		public string UserName { get; set; }
-		public DateTime DatePerformed { get; set; }
-		public string Notes { get; set; }
-		public bool Billable { get; set; }
+		// Stories and chores combined
+		public int TotalStoryCount { get; set; }
+		public int TotalStoryPoints { get; set; }
 
-		public DateTime SourceRecordCreatedAt { get; set; }
-		public DateTime SourceRecordUpdatedAt { get; set; }
-		public DateTime LocallyCreatedAt { get; set; }
-		public DateTime LocallyUpdatedAt { get; set; }
+		// All Features, planned and unplanned combined
+		public int TotalFeatureCount { get; set; }
+		public int TotalFeaturePoints { get; set; }
+
+		// All Chores, planned and unplanned combined
+		public int TotalChoreCount { get; set; }
+		public int TotalChorePoints { get; set; }
+
+		// Planned work, client-funded, includes Features and Chores combined
+		public int PlannedClientStoryCount { get; set; }
+		public int PlannedClientStoryPoints { get; set; }
+
+		// Planned work, R&D-funded, includes Features and Chores combined
+		public int PlannedRDStoryCount { get; set; }
+		public int PlannedRDStoryPoints { get; set; }
+
+		// Unplanned work, client-funded, includes Features and Chores combined
+		public int UnplannedClientStoryCount { get; set; }
+		public int UnplannedClientStoryPoints { get; set; }
+
+		// Unplanned work, R&D-funded, includes Features and Chores combined
+		public int UnplannedRDStoryCount { get; set; }
+		public int UnplannedRDStoryPoints { get; set; }
+
+		// Points assigned to Contingency cases that have not been re-assigned elsewhere. (Represents unused buffer time from the planned bucket)
+		public int UnusedContingencyPoints { get; set; }
 
 		/// <summary>
-		/// The total time, in minutes, billed in the timekeeping system
+		/// Total time billed to shipped work / total shipped points
 		/// </summary>
-		public int DurationMinutes { get; set; }
+		public decimal FullyLoadedHoursPerPoint { get; set; }
 
 		/// <summary>
-		/// The elapsed time, allocated to the relvant Work Items. (These records only exist for work items that are both
-		/// referenced by the time entry AND found in the local cache when the record is imported. If a time entry contains
-		/// a comment referencing an invalid work item, then no Work Item Allocation will be created. It's the job of the 
-		/// validation system to spot these issues)
+		/// The number of defects that were fixed, that were not introduced or part of the planned development in the release
 		/// </summary>
-		[JsonIgnore]
-		public virtual List<TimeEntryWorkItemAllocation> WorkItems { get; set; }
+		public int LegacyDefectCount { get; set; }
 
 		/// <summary>
-		/// If TRUE then the metrics system should ignore this entry. This is used to indicate that an entry was imported 
-		/// from the timekeeping system but was determined to be irrelevant or otherwise unwanted. (These things are not 
-		/// hard deleted so that we can retain a historical record of it)
+		/// The total number of hours tracked against legacy defects / total count of legacy defects. Since we don't count "points" for defects,
+		/// this gives us a way of quantifying the time we spend maintaining what we've already built.
 		/// </summary>
-		public bool Ignore { get; set; }
+		[Column(TypeName = "decimal(6,3)")]
+		public decimal HoursPerLegacyDefect { get; set; }
+
+		/// <summary>
+		/// The number of defects that were fixed that were introduced by, or part of, the development for the release
+		/// </summary>
+		public int NewDefectCount { get; set; }
+
+		/// <summary>
+		/// # of NEW defects / # of stories. Helps indicate the "churn" encountered when stories did not pass QA on the first pass.
+		/// </summary>
+		[Column(TypeName = "decimal(6,3)")]
+		public decimal ReworkRatio { get; set; }
 
 		public ReleaseMetrics() {
-			WorkItems = new List<TimeEntryWorkItemAllocation>();
 		}
 
-		public ReleaseMetrics(string releaseNum, MavenlinkTimeEntry mlEntry, List<TimeEntryWorkItemAllocation> workItemAllocations = null) {
-			if (releaseNum.IsNullOrEmpty())
-				throw new ArgumentNullException("releaseNum");
-
-			if (mlEntry == null)
-				throw new ArgumentNullException("mlEntry");
-
-			this.Id = "ML:" + mlEntry.MavenlinkTimeId;
-
-			this.ReleaseNumber = releaseNum;
-
-			this.ProjectId = mlEntry.ProjectId;
-			this.ProjectTitle = mlEntry.ProjectTitle;
-			this.TaskId = mlEntry.TaskId;
-			this.TaskTitle = mlEntry.TaskTitle;
-			this.UserName = mlEntry.UserName;
-			this.DatePerformed = mlEntry.DatePerformed;
-			this.Notes = mlEntry.Notes;
-			this.Billable = mlEntry.Billable;
-
-			this.SourceRecordCreatedAt = mlEntry.MavenlinkCreatedAt;
-			this.SourceRecordUpdatedAt = mlEntry.MavenlinkUpdatedAt;
-			this.LocallyCreatedAt = DateTime.Now;
-			this.LocallyUpdatedAt = DateTime.Now;
-
-			this.DurationMinutes = mlEntry.DurationMinutes;
-			this.WorkItems = workItemAllocations ?? new List<TimeEntryWorkItemAllocation>();
-
-			this.Ignore = false;
-		}
 	}
 }

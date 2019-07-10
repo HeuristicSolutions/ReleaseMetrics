@@ -43,7 +43,11 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 				],
 				"customfield_10022": 4,
 				"customfield_10018": "LB-epic-ID",
-				"labels": [],
+				"customfield_10843": {
+					"self": "https://heuristicsolutions.atlassian.net/rest/api/2/customFieldOption/10435",
+					"value": "Legacy"
+					"id": "10435"
+				},
 				"status": {
 					"self": "https://heuristicsolutions.atlassian.net/rest/api/2/status/10500",
 					"description": "Story was designed (at least at a high level) but was not selected for inclusion in a release.",
@@ -87,6 +91,9 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 			[JsonProperty("customfield_10018")]
 			public string EpicStoryId { get; set; }
 
+			[JsonProperty("customfield_10843")]
+			public DefectType DefectType { get; set; }
+
 			[JsonProperty("labels")]
 			public List<string> Labels { get; set; }
 
@@ -110,6 +117,11 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 
 			[JsonProperty("name")]
 			public string ReleaseNumber { get; set; }
+		}
+
+		public class DefectType {
+			[JsonProperty("value")]
+			public string Value { get; set; }
 		}
 
 		// map the root of the JSON doc

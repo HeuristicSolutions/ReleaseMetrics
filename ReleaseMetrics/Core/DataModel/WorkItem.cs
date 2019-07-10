@@ -73,7 +73,7 @@ namespace ReleaseMetrics.Core.DataModel {
 			this.EpicWorkItemId = story.EpicStoryId;
 			this.EpicName = (epic != null) ? epic.Title : null;
 			this.Title = story.Title;
-			this.Type = JiraHelper.GetWorkItemType(story.IssueType);
+			this.Type = JiraHelper.GetWorkItemType(story);
 			this.StoryPointsOriginal = story.StoryPoints.HasValue ? (int)story.StoryPoints.Value : (int?)null;
 			this.StoryPoints = story.StoryPoints.HasValue ? (int)story.StoryPoints.Value : 0;
 			this.BillToClient = "TODO";

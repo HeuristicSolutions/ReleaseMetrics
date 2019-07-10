@@ -12,6 +12,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 		public string Id { get; set; }
 		public string EpicStoryId { get; set; }
 		public string IssueType { get; set; }
+		public string DefectType { get; set; }
 		public string Status { get; set; }
 		public string Title { get; set; }
 		public decimal? StoryPoints { get; set; }
@@ -24,6 +25,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 			Id = rawApiResponse.StoryNumber;
 			EpicStoryId = rawApiResponse.Details.EpicStoryId;
 			IssueType = rawApiResponse.Details.IssueType.Name;
+			DefectType = rawApiResponse.Details?.DefectType?.Value ?? "";
 			Status = rawApiResponse.Details.Status.Name;
 			Title = rawApiResponse.Details.Summary;
 			StoryPoints = rawApiResponse.Details.StoryPoints;

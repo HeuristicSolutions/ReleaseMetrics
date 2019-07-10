@@ -7,6 +7,7 @@ using ReleaseMetrics.Core.Helpers;
 using ReleaseMetrics.Core.Releases;
 using System.Data.SqlClient;
 using ReleaseMetrics.Core.TimeEntries;
+using ReleaseMetrics.Core.DataModel.EfCoreExtensions;
 
 namespace ReleaseMetrics.Core.DataModel {
 
@@ -21,6 +22,12 @@ namespace ReleaseMetrics.Core.DataModel {
 		public DbQuery<ReleaseSummary> ReleaseSummaries { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder) {
+			base.OnModelCreating(builder);
+
+			// custom attribute stuff
+			SqlDefaultValueAttributeConvention.Apply(builder);
+
+			// normal schema modifications
 			builder.Entity<TimeEntry>()
 				.HasMany(x => x.WorkItems)
 				.WithOne(w => w.TimeEntry)

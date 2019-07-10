@@ -23,10 +23,16 @@ namespace ReleaseMetrics.Core.DataModel {
 		Feature,
 
 		/// <summary>
-		/// Defects represent that some previously delivered, and "counted", feature was incomplete. They do
-		/// not count towards velocity
+		/// Legacy Defects are defects fixed in a release that were introduced in an earlier release. These are NOT
+		/// related to the work we'd planned to do in the release.
 		/// </summary>
-		Defect,
+		LegacyDefect,
+
+		/// <summary>
+		/// New Defects are defects created by, and fixed within, the current release. They indicate that a story was
+		/// pushed to QA with some deficiency that was later caught and fixed as part of the release process.
+		/// </summary>
+		NewDefect,
 
 		/// <summary>
 		/// Items on the architecture backlog don't count towards metrics

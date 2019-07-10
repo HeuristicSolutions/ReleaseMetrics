@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Core\DataModel\ReleaseMetrics.cs" />
     <Compile Remove="Migrations\20180726012001_InitialCreate.cs" />
     <Compile Remove="Migrations\20180726012001_InitialCreate.Designer.cs" />
     <Compile Remove="Migrations\20180808184356_AddStoriesAndTimeEntries.cs" />

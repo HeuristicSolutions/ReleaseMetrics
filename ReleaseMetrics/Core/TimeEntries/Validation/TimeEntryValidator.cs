@@ -75,7 +75,7 @@ namespace ReleaseMetrics.Core.TimeEntries {
 						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is not tagged to release {release.ReleaseNumber}. Time will be counted towards 'undelivered'.");
 					}
 
-					var isEpic = (JiraHelper.GetWorkItemType(jiraStory.IssueType) == WorkItemTypeEnum.Epic);
+					var isEpic = (JiraHelper.GetWorkItemType(jiraStory) == WorkItemTypeEnum.Epic);
 					var isDeclined = jiraStory.Status.EqualsIgnoringCase("Declined");
 
 					if (isDeclined) {
