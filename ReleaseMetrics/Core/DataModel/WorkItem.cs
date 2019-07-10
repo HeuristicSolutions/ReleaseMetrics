@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ReleaseMetrics.Core.WorkItems;
-using ReleaseMetrics.Core.WorkItems.JiraApi;
+﻿using ReleaseMetrics.Core.WorkItems;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +28,9 @@ namespace ReleaseMetrics.Core.DataModel {
 		public string ReleaseNumber { get; set; }
 
 		public virtual Release Release { get; set; }
+
+		[Column(TypeName = "nvarchar(50)")]
+		public WorkItemStatusEnum Status { get; set; }
 
 		/// <summary>
 		/// The ID of the epic this belongs to, or null.
@@ -72,6 +73,7 @@ namespace ReleaseMetrics.Core.DataModel {
 		public WorkItem(string releaseNum, JiraStory story, JiraStory epic) {
 			this.StoryNumber = story.Id;
 			this.ReleaseNumber = releaseNum;
+			this.Status = JiraHelper.GetWorkItemStatus(story);
 			this.EpicWorkItemId = story.EpicStoryId;
 			this.EpicName = (epic != null) ? epic.Title : null;
 			this.Title = story.Title;
@@ -80,6 +82,5 @@ namespace ReleaseMetrics.Core.DataModel {
 			this.StoryPoints = story.StoryPoints.HasValue ? (int)story.StoryPoints.Value : 0;
 			this.BillToClient = "TODO";
 		}
-
 	}
 }

@@ -15,9 +15,9 @@ namespace ReleaseMetrics.Core.Releases {
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public string Notes { get; set; }
-		public int TotalPoints { get; set; }
+		public int FeatureAndChorePoints { get; set; }
+		public int FeatureAndChoreCount { get; set; }
 		public int TimeEntryCount { get; set; }
-		public int WorkItemCount { get; set; }
 
 		public ReleaseSummary() { }
 
@@ -26,9 +26,9 @@ namespace ReleaseMetrics.Core.Releases {
 			this.StartDate = release.StartDate;
 			this.EndDate = release.EndDate;
 			this.Notes = release.Notes;
-			this.TotalPoints = release.WorkItems.Sum(x => x.StoryPoints);
+			this.FeatureAndChorePoints = release.WorkItems.Sum(x => x.StoryPoints);
+			this.FeatureAndChoreCount = release.WorkItems.Count();
 			this.TimeEntryCount = release.TimeEntries.Count();
-			this.WorkItemCount = release.WorkItems.Count();
 		}
 	}
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReleaseMetrics.Core.DataModel;
 
 namespace ReleaseMetrics.Migrations
 {
     [DbContext(typeof(MetricsDbContext))]
-    partial class MetricsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190710174717_AddWorkItemStatus")]
+    partial class AddWorkItemStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

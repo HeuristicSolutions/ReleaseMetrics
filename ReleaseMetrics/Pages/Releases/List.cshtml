@@ -43,7 +43,7 @@
 					<td>{{ release.notes }}</td>
 					<td class="text-nowrap">{{ release.startDate | shortDate }}</td>
 					<td class="text-nowrap">{{ release.endDate | shortDate }}</td>
-					<td>{{ release.totalPoints }}</td>
+					<td>{{ release.featureAndChorePoints }}</td>
 					<td>
 						<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
 					</td>
