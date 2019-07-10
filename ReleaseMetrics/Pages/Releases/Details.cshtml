@@ -42,7 +42,7 @@
 				<div v-bind:class="{ 'footer-counts': true, 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
 					<div class="loading-overlay"></div>
 					<span class="text-muted data-count">
-						<b>Work Items (local):</b> {{ release.workItemCount }}
+						<b>Work Items (local):</b> {{ release.featureAndChoreCount }}
 					</span>
 					<span class="text-muted data-count">
 						<b>Time Entries (local):</b> {{ release.timeEntryCount }}
@@ -424,6 +424,7 @@
 					.then(response => {
 						this.addValidationProperties(response.data);
 						this.$data.timeEntries = response.data;
+						$("#mavenlinkSyncConfirmationModal").modal("hide");
 						this.refreshReleaseDetails();
 						this.$data.isLoadingTimeEntries = false;
 					});

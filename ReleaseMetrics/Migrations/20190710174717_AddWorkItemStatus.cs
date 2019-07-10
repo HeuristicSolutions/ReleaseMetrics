@@ -39,21 +39,21 @@ namespace ReleaseMetrics.Migrations
 							r.EndDate,
 							r.Notes,
 							(
-								select	sum(wi.StoryPoints)
+								select	isnull(sum(wi.StoryPoints), 0)
 								from	dbo.WorkItems wi
 								where	wi.ReleaseNumber = r.ReleaseNumber
 										and wi.Type in ('Chore', 'Contingency', 'Feature')
 										and wi.Status = 'Shipped'
 							) as FeatureAndChorePoints,
 							(
-								select	count(*)
+								select	isnull(count(*), 0)
 								from	dbo.WorkItems wi
 								where	wi.ReleaseNumber = r.ReleaseNumber
 										and wi.Type in ('Chore', 'Contingency', 'Feature')
 										and wi.Status = 'Shipped'
 							) as FeatureAndChoreCount,
 							(
-								select	count(*)
+								select	isnull(count(*), 0)
 								from	dbo.TimeEntries te
 								where	te.ReleaseNumber = r.ReleaseNumber
 							) as TimeEntryCount

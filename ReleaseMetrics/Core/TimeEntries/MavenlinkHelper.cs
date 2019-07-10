@@ -46,6 +46,7 @@ namespace ReleaseMetrics.Core.TimeEntries {
 					return TeamDisciplineEnum.Dev;
 
 				case "BRIAN LYTLE":
+				case "TERISA BROYLES":
 				case "CHRISTY MOORE":
 				case "ALEX SOMBATY":
 					return TeamDisciplineEnum.QA;
