@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ReleaseMetrics.Core;
 using ReleaseMetrics.Core.Configuration;
 using ReleaseMetrics.Core.DataModel;

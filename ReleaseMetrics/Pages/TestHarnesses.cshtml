@@ -239,7 +239,9 @@
 
 			// accepts a click event. Uses the DOM to look for a data elements indicating the URL to call. 
 			// If the URL contains placeholders like "{foo}", then looks for input fields with a class like "js-bind-foo" and replaces the placeholder
-			// with the value in the textbox
+			// with the value in the textbox.
+			//
+			// If
 			autoBindAndTestApi: function (event) {
 				var btn = $(event.currentTarget);
 				var apiUrl = btn.data('api-url');
@@ -313,9 +315,11 @@
 					// caller specified exactly what to show
 					valueToShow = '<pre>' + response + '</pre>';
 				}
-				else if (typeof response === 'object' && response.response) {
+				else if (typeof response === 'object' && response.data) {
 					// axios response
-					valueToShow = response.response.data;
+					valueToShow = (typeof response.data === 'string')
+						? '<pre>' + response.data + '</pre>'
+						: '<pre>' + JSON.stringify(response.data, null, 2) + '</pre>'
 				}
 				else {
 					// assume JSON payload
