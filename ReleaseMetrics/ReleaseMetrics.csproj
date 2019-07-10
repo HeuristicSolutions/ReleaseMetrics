@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -31,6 +31,10 @@
     <Compile Remove="Migrations\20180817040004_InitialCreate.Designer.cs" />
     <Compile Remove="Migrations\20180817121548_InitialCreate.cs" />
     <Compile Remove="Migrations\20180817121548_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20180817155730_InitialCreate.cs" />
+    <Compile Remove="Migrations\20180817155730_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190710142509_AddDisciplineToTimeEntry.cs" />
+    <Compile Remove="Migrations\20190710142509_AddDisciplineToTimeEntry.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

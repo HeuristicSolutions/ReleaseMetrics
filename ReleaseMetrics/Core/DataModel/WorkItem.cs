@@ -4,14 +4,15 @@ using ReleaseMetrics.Core.WorkItems.JiraApi;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReleaseMetrics.Core.DataModel {
 
 	/// <summary>
-	/// Represents a story or case that went into a release. These data are cached locally to improve performance
-	/// but we do NOT expect local modifications to be made. Unlike time entries, which may be difficult to modify
-	/// once an invoice is created, work items are generally easily updated so if a change needs to be made it will
-	/// just be made to the external system and re-imported, rather than being modified locally.
+	/// Canonical/standardized representation of a story or case that went into a release. These data are cached locally 
+	/// to improve performance but we do NOT expect local modifications to be made. Unlike time entries, which may be 
+	/// difficult to modify once an invoice is created, work items are generally easily updated so if a change needs to 
+	/// be made it will just be made to the external system and re-imported, rather than being modified locally.
 	/// 
 	/// Can represent both FogBugz (legacy) and Jira (modern) work items.
 	/// </summary>
@@ -47,6 +48,7 @@ namespace ReleaseMetrics.Core.DataModel {
 		public string Title { get; set; }
 
 		[Required]
+		[Column(TypeName = "nvarchar(25)")]
 		public WorkItemTypeEnum Type { get; set; }
 
 		public int? StoryPointsOriginal { get; set; }

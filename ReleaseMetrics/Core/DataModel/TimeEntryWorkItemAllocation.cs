@@ -16,11 +16,11 @@ namespace ReleaseMetrics.Core.DataModel {
 	/// </summary>
 	public class TimeEntryWorkItemAllocation {
 
-		[MaxLength(250)]
+		[MaxLength(50)]
 		public string TimeEntryId { get; set; }
 		public virtual TimeEntry TimeEntry { get; set; }
 
-		[MaxLength(250)]
+		[MaxLength(50)]
 		public string WorkItemId { get; set; }
 		public virtual WorkItem WorkItem { get; set; }
 

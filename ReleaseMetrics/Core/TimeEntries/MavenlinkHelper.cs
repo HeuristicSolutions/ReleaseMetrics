@@ -33,12 +33,13 @@ namespace ReleaseMetrics.Core.TimeEntries {
 				.ToList();
 		}
 
-		public static TeamDisciplineEnum GetTeamDiscipline(string userName) {
-			switch (userName.ToUpper()) {
+		public static TeamDisciplineEnum GetTeamDiscipline(MavenlinkTimeEntry mlEntry) {
+			switch (mlEntry.UserName.ToUpper()) {
 				case "BRAD PHIPPS":
 				case "MIKE FEIMSTER":
 				case "CALVIN ALLEN":
 				case "SCOTT REED":
+				case "JASON BRAY":
 					return TeamDisciplineEnum.Dev;
 
 				case "SETH PETRY-JOHNSON":
@@ -46,6 +47,7 @@ namespace ReleaseMetrics.Core.TimeEntries {
 
 				case "BRIAN LYTLE":
 				case "CHRISTY MOORE":
+				case "ALEX SOMBATY":
 					return TeamDisciplineEnum.QA;
 
 				case "SARA NICHOLSON":

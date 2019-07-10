@@ -27,6 +27,10 @@ namespace ReleaseMetrics.Core.DataModel {
 		public string ReleaseNumber { get; set; }
 		public virtual Release Release { get; set; }
 
+		[Required]
+		[Column(TypeName = "nvarchar(25)")]
+		public TeamDisciplineEnum Discipline { get; set; }
+
 		/// <summary>
 		/// The project Id that the time entry was originally billed to
 		/// </summary>
@@ -137,6 +141,7 @@ namespace ReleaseMetrics.Core.DataModel {
 			this.Id = "ML:" + mlEntry.MavenlinkTimeId;
 
 			this.ReleaseNumber = releaseNum;
+			this.Discipline = MavenlinkHelper.GetTeamDiscipline(mlEntry);
 
 			this.ProjectIdOrig = mlEntry.ProjectId;
 			this.ProjectTitleOrig = mlEntry.ProjectTitle;

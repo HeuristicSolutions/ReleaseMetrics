@@ -15,13 +15,14 @@ namespace ReleaseMetrics.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("ReleaseMetrics.Core.DataModel.Release", b =>
                 {
-                    b.Property<string>("ReleaseNumber");
+                    b.Property<string>("ReleaseNumber")
+                        .HasMaxLength(25);
 
                     b.Property<DateTime>("EndDate");
 
@@ -43,13 +44,20 @@ namespace ReleaseMetrics.Migrations
             modelBuilder.Entity("ReleaseMetrics.Core.DataModel.TimeEntry", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50);
 
                     b.Property<bool>("Billable");
 
                     b.Property<DateTime>("DatePerformed");
 
-                    b.Property<int>("DurationMinutes");
+                    b.Property<string>("Discipline")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("DurationMinutesOrig");
+
+                    b.Property<int>("DurationMinutesOverride");
 
                     b.Property<bool>("Ignore");
 
@@ -57,23 +65,43 @@ namespace ReleaseMetrics.Migrations
 
                     b.Property<DateTime>("LocallyUpdatedAt");
 
-                    b.Property<string>("Notes");
+                    b.Property<string>("NotesOrig");
 
-                    b.Property<string>("ProjectId");
+                    b.Property<string>("NotesOverride");
 
-                    b.Property<string>("ProjectTitle");
+                    b.Property<string>("ProjectIdOrig")
+                        .HasMaxLength(50);
 
-                    b.Property<string>("ReleaseNumber");
+                    b.Property<string>("ProjectIdOverride")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ProjectTitleOrig")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ProjectTitleOverride")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ReleaseNumber")
+                        .HasMaxLength(25);
 
                     b.Property<DateTime>("SourceRecordCreatedAt");
 
                     b.Property<DateTime>("SourceRecordUpdatedAt");
 
-                    b.Property<string>("TaskId");
+                    b.Property<string>("TaskIdOrig")
+                        .HasMaxLength(50);
 
-                    b.Property<string>("TaskTitle");
+                    b.Property<string>("TaskIdOverride")
+                        .HasMaxLength(50);
 
-                    b.Property<string>("UserName");
+                    b.Property<string>("TaskTitleOrig")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("TaskTitleOverride")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
@@ -87,9 +115,11 @@ namespace ReleaseMetrics.Migrations
 
             modelBuilder.Entity("ReleaseMetrics.Core.DataModel.TimeEntryWorkItemAllocation", b =>
                 {
-                    b.Property<string>("TimeEntryId");
+                    b.Property<string>("TimeEntryId")
+                        .HasMaxLength(250);
 
-                    b.Property<string>("WorkItemId");
+                    b.Property<string>("WorkItemId")
+                        .HasMaxLength(250);
 
                     b.Property<decimal>("DurationMinutes")
                         .HasColumnType("decimal(6,3)");
@@ -104,26 +134,34 @@ namespace ReleaseMetrics.Migrations
             modelBuilder.Entity("ReleaseMetrics.Core.DataModel.WorkItem", b =>
                 {
                     b.Property<string>("StoryNumber")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50);
 
                     b.Property<string>("BillToClient")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(150);
 
-                    b.Property<string>("EpicName");
+                    b.Property<string>("EpicName")
+                        .HasMaxLength(250);
 
-                    b.Property<string>("EpicWorkItemId");
+                    b.Property<string>("EpicWorkItemId")
+                        .HasMaxLength(50);
 
                     b.Property<string>("ReleaseNumber")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(25);
 
                     b.Property<int>("StoryPoints");
 
                     b.Property<int?>("StoryPointsOriginal");
 
                     b.Property<string>("Title")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(250);
 
-                    b.Property<int>("Type");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("StoryNumber");
 
@@ -143,13 +181,13 @@ namespace ReleaseMetrics.Migrations
 
             modelBuilder.Entity("ReleaseMetrics.Core.DataModel.TimeEntryWorkItemAllocation", b =>
                 {
-                    b.HasOne("ReleaseMetrics.Core.DataModel.WorkItem", "WorkItem")
-                        .WithMany("TimeEntries")
+                    b.HasOne("ReleaseMetrics.Core.DataModel.TimeEntry", "TimeEntry")
+                        .WithMany("WorkItems")
                         .HasForeignKey("TimeEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ReleaseMetrics.Core.DataModel.TimeEntry", "TimeEntry")
-                        .WithMany("WorkItems")
+                    b.HasOne("ReleaseMetrics.Core.DataModel.WorkItem", "WorkItem")
+                        .WithMany("TimeEntries")
                         .HasForeignKey("WorkItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

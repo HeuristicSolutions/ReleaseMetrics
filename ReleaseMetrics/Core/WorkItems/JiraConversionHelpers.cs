@@ -18,8 +18,11 @@ namespace ReleaseMetrics.Core.WorkItems {
 				case "EPIC": return WorkItemTypeEnum.Epic;
 				case "STORY": return WorkItemTypeEnum.Feature;
 				case "CHORE": return WorkItemTypeEnum.Chore;
-				case "DEFECT": return WorkItemTypeEnum.LegacyDefect;
-				default: throw new NotImplementedException($"Jira issue type '{issueType}' is not mapped to a work item type");
+				case "CONTINGENCY": return WorkItemTypeEnum.Contingency;
+				case "DEFECT" when story.DefectType == "Current": return WorkItemTypeEnum.NewDefect;
+				case "DEFECT" when story.DefectType != "Current": return WorkItemTypeEnum.LegacyDefect;		// default to legacy, but maybe could benefit from more analysis here
+
+				default: throw new NotImplementedException($"Could not map Jira issue {story.Id} (a '{issueType}') to a work item type");
 			}
 		}
 	}

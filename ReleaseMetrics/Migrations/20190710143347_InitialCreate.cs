@@ -11,9 +11,9 @@ namespace ReleaseMetrics.Migrations
                 name: "Releases",
                 columns: table => new
                 {
-                    ReleaseNumber = table.Column<string>(nullable: false, maxLength: 25),
-                    StartDate = table.Column<DateTime>(nullable: false, type: "date"),
-                    EndDate = table.Column<DateTime>(nullable: false, type: "date"),
+                    ReleaseNumber = table.Column<string>(maxLength: 25, nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
                     Notes = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -25,28 +25,29 @@ namespace ReleaseMetrics.Migrations
                 name: "TimeEntries",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false, maxLength: 50),
-                    ReleaseNumber = table.Column<string>(nullable: true, maxLength: 25),
-                    ProjectIdOrig = table.Column<string>(nullable: true, maxLength: 50),
-					ProjectIdOverride = table.Column<string>(nullable: true, maxLength: 50),
-					ProjectTitleOrig = table.Column<string>(nullable: true, maxLength: 250),
-					ProjectTitleOverride = table.Column<string>(nullable: true, maxLength: 250),
-					TaskIdOrig = table.Column<string>(nullable: true, maxLength: 50),
-					TaskIdOverride = table.Column<string>(nullable: true, maxLength: 50),
-					TaskTitleOrig = table.Column<string>(nullable: true, maxLength: 250),
-					TaskTitleOverride = table.Column<string>(nullable: true, maxLength: 250),
-					UserName = table.Column<string>(nullable: true, maxLength: 50),
-                    DatePerformed = table.Column<DateTime>(nullable: false, type: "date"),
+                    Id = table.Column<string>(maxLength: 50, nullable: false),
+                    ReleaseNumber = table.Column<string>(maxLength: 25, nullable: true),
+                    Discipline = table.Column<string>(type: "nvarchar(25)", nullable: false),
+                    ProjectIdOrig = table.Column<string>(maxLength: 50, nullable: true),
+                    ProjectIdOverride = table.Column<string>(maxLength: 50, nullable: true),
+                    ProjectTitleOrig = table.Column<string>(maxLength: 250, nullable: true),
+                    ProjectTitleOverride = table.Column<string>(maxLength: 250, nullable: true),
+                    TaskIdOrig = table.Column<string>(maxLength: 50, nullable: true),
+                    TaskIdOverride = table.Column<string>(maxLength: 50, nullable: true),
+                    TaskTitleOrig = table.Column<string>(maxLength: 250, nullable: true),
+                    TaskTitleOverride = table.Column<string>(maxLength: 250, nullable: true),
+                    UserName = table.Column<string>(maxLength: 50, nullable: true),
+                    DatePerformed = table.Column<DateTime>(nullable: false),
                     NotesOrig = table.Column<string>(nullable: true),
-					NotesOverride = table.Column<string>(nullable: true),
-					Billable = table.Column<bool>(nullable: false),
+                    NotesOverride = table.Column<string>(nullable: true),
+                    Billable = table.Column<bool>(nullable: false),
                     SourceRecordCreatedAt = table.Column<DateTime>(nullable: false),
                     SourceRecordUpdatedAt = table.Column<DateTime>(nullable: false),
                     LocallyCreatedAt = table.Column<DateTime>(nullable: false),
                     LocallyUpdatedAt = table.Column<DateTime>(nullable: false),
                     DurationMinutesOrig = table.Column<int>(nullable: false),
-					DurationMinutesOverride = table.Column<int>(nullable: false),
-					Ignore = table.Column<bool>(nullable: false)
+                    DurationMinutesOverride = table.Column<int>(nullable: false),
+                    Ignore = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,15 +64,15 @@ namespace ReleaseMetrics.Migrations
                 name: "WorkItems",
                 columns: table => new
                 {
-                    StoryNumber = table.Column<string>(nullable: false, maxLength: 50),
-                    ReleaseNumber = table.Column<string>(nullable: false, maxLength: 25),
-                    EpicWorkItemId = table.Column<string>(nullable: true, maxLength: 50),
-                    EpicName = table.Column<string>(nullable: true, maxLength: 250),
-                    Title = table.Column<string>(nullable: false, maxLength: 250),
-                    Type = table.Column<int>(nullable: false),
+                    StoryNumber = table.Column<string>(maxLength: 50, nullable: false),
+                    ReleaseNumber = table.Column<string>(maxLength: 25, nullable: false),
+                    EpicWorkItemId = table.Column<string>(maxLength: 50, nullable: true),
+                    EpicName = table.Column<string>(maxLength: 250, nullable: true),
+                    Title = table.Column<string>(maxLength: 250, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(25)", nullable: false),
                     StoryPointsOriginal = table.Column<int>(nullable: true),
                     StoryPoints = table.Column<int>(nullable: false),
-                    BillToClient = table.Column<string>(nullable: false, maxLength: 150)
+                    BillToClient = table.Column<string>(maxLength: 150, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,41 +89,41 @@ namespace ReleaseMetrics.Migrations
                 name: "TimeEntryWorkItemAllocations",
                 columns: table => new
                 {
-                    TimeEntryId = table.Column<string>(nullable: false, maxLength: 50),
-                    WorkItemId = table.Column<string>(nullable: false, maxLength: 50),
+                    TimeEntryId = table.Column<string>(maxLength: 50, nullable: false),
+                    WorkItemId = table.Column<string>(maxLength: 50, nullable: false),
                     DurationMinutes = table.Column<decimal>(type: "decimal(6,3)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TimeEntryWorkItemAllocations", x => new { x.TimeEntryId, x.WorkItemId });
                     table.ForeignKey(
-                        name: "FK_TimeEntryWorkItemAllocations_WorkItems_WorkItemId",
-                        column: x => x.WorkItemId,
-                        principalTable: "WorkItems",
-                        principalColumn: "StoryNumber",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_TimeEntryWorkItemAllocations_TimeEntries_TimeEntryId",
                         column: x => x.TimeEntryId,
                         principalTable: "TimeEntries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TimeEntryWorkItemAllocations_WorkItems_WorkItemId",
+                        column: x => x.WorkItemId,
+                        principalTable: "WorkItems",
+                        principalColumn: "StoryNumber",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Releases",
-                columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
-                values: new object[] { "9.2.0", new DateTime(2018, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quick tunaround release specific to GSX. Added Pearson VUE integration. Limited regression test. Missed the original expected release date by 1 week for stabilization; contributing factors were weak up-front technical analysis that failed to identify complexity in the API calls and Mike/Brad's relative inexperience with the product and team.", new DateTime(2018, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+			migrationBuilder.InsertData(
+				table: "Releases",
+				columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
+				values: new object[] { "9.2.0", new DateTime(2018, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quick tunaround release specific to GSX. Added Pearson VUE integration. Limited regression test. Missed the original expected release date by 1 week for stabilization; contributing factors were weak up-front technical analysis that failed to identify complexity in the API calls and Mike/Brad's relative inexperience with the product and team.", new DateTime(2018, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
-            migrationBuilder.InsertData(
-                table: "Releases",
-                columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
-                values: new object[] { "9.3.0", new DateTime(2018, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Multi-client release. Primary focus was Vouchers for ABPANC. Also included the \"call external API\" behavior (ABPANC), Tenant-specific dashboards (GSX), tweaks for 3rd party payment details (DCOPLA), and minor R&D enhancements. Included a full regression test. Spanned LB Academy.", new DateTime(2018, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+			migrationBuilder.InsertData(
+				table: "Releases",
+				columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
+				values: new object[] { "9.3.0", new DateTime(2018, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Multi-client release. Primary focus was Vouchers for ABPANC. Also included the \"call external API\" behavior (ABPANC), Tenant-specific dashboards (GSX), tweaks for 3rd party payment details (DCOPLA), and minor R&D enhancements. Included a full regression test. Spanned LB Academy.", new DateTime(2018, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
-            migrationBuilder.InsertData(
-                table: "Releases",
-                columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
-                values: new object[] { "9.4.0", new DateTime(2018, 8, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "Primary focus was prevention of duplicate SSNs for DCOPLA. Also included some R&D improvements to the Automations system and the ability to bulk load Intrinsic Attributes in the Workflow Attribute Retrieval Service (part of performance improvement long-term plan). Released as scheduled following a full regression test, but development team was about two weeks ahead of schedule and started the 9.5 features early.", new DateTime(2018, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+			migrationBuilder.InsertData(
+				table: "Releases",
+				columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
+				values: new object[] { "9.4.0", new DateTime(2018, 8, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "Primary focus was prevention of duplicate SSNs for DCOPLA. Also included some R&D improvements to the Automations system and the ability to bulk load Intrinsic Attributes in the Workflow Attribute Retrieval Service (part of performance improvement long-term plan). Released as scheduled following a full regression test, but development team was about two weeks ahead of schedule and started the 9.5 features early.", new DateTime(2018, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
 			migrationBuilder.InsertData(
 				table: "Releases",
@@ -164,7 +165,7 @@ namespace ReleaseMetrics.Migrations
                 name: "IX_WorkItems_StoryNumber",
                 table: "WorkItems",
                 column: "StoryNumber");
-
+			
 			migrationBuilder.Sql(@"
 				create view vReleaseSummaries as
 					select	r.ReleaseNumber,
@@ -188,7 +189,7 @@ namespace ReleaseMetrics.Migrations
 							) as TimeEntryCount
 					from	dbo.Releases r
 			");
-        }
+		}
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -200,10 +201,10 @@ namespace ReleaseMetrics.Migrations
                 name: "TimeEntryWorkItemAllocations");
 
             migrationBuilder.DropTable(
-                name: "WorkItems");
+                name: "TimeEntries");
 
             migrationBuilder.DropTable(
-                name: "TimeEntries");
+                name: "WorkItems");
 
             migrationBuilder.DropTable(
                 name: "Releases");

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace ReleaseMetrics.Core.DataModel {
 
+	/// <remarks>
+	/// NOTE: Do not rename these enums w/out updating the database. They are mapped using their string representation
+	/// to the data model.
+	/// </remarks>
 	public enum WorkItemTypeEnum {
 
 		/// <summary>
@@ -37,6 +41,14 @@ namespace ReleaseMetrics.Core.DataModel {
 		/// <summary>
 		/// Items on the architecture backlog don't count towards metrics
 		/// </summary>
-		ArchitecturalIssue
+		ArchitecturalIssue,
+
+		/// <summary>
+		/// Contingency cases are a way of recording "planned contingency". Typically, as we find issues, we decrease
+		/// the points on these stories and use those points to create the actual stories. Generally speaking there
+		/// shouldn't be any time billed directly to these cases. Contingency cases with points > 0 indicate that we
+		/// shipped a planned scope of work with less-than-estimated complexity.
+		/// </summary>
+		Contingency
 	}
 }

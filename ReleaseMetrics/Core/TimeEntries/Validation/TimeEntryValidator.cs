@@ -75,8 +75,10 @@ namespace ReleaseMetrics.Core.TimeEntries {
 						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is not tagged to release {release.ReleaseNumber}. Time will be counted towards 'undelivered'.");
 					}
 
-					var isEpic = (JiraHelper.GetWorkItemType(jiraStory) == WorkItemTypeEnum.Epic);
+					var workItemType = JiraHelper.GetWorkItemType(jiraStory);
+					var isEpic = (workItemType == WorkItemTypeEnum.Epic);
 					var isDeclined = jiraStory.Status.EqualsIgnoringCase("Declined");
+					var isContingency = (workItemType == WorkItemTypeEnum.Contingency);
 
 					if (isDeclined) {
 						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is marked as 'DECLINED'. Time will be tracked towards 'undelivered'.");
@@ -84,6 +86,10 @@ namespace ReleaseMetrics.Core.TimeEntries {
 
 					if (isEpic && isPlanned) {
 						warnings.Add($"'{jiraStoryId}' is an Epic; epics should generally have Overhead or Unplanned time instead of Planned.");
+					}
+
+					if (isContingency) {
+						errors.Add($"'{jiraStoryId}' is a Contingency; Contingency cases should not have time billed to them. The time (and contingency points) should be moved to an actual feature.");
 					}
 				}
 
