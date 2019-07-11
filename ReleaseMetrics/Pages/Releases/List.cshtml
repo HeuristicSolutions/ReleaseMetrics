@@ -48,12 +48,12 @@
 					<tr class="release-top">
 						<th scope="row" rowspan="2">{{ release.releaseNumber }}</th>
 						<td class="text-nowrap">
-							<b>TODO weeks</b> ({{ release.startDate | shortDate }} - {{ release.endDate | shortDate }})
+							<b>{{ release.weeksInRelease }} weeks</b> ({{ release.startDate | shortDate }} - {{ release.endDate | shortDate }})
 						</td>
-						<td>{{ release.featureAndChorePoints }}</td>
+						<td>{{ release.shippedFeatureAndChorePoints }}</td>
 						<td>TBD</td>
 						<td>TBD</td>
-						<td>TBD</td>
+						<td>{{ release.fullyLoadedAvgHoursPerPoint }}</td>
 						<td>
 							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
 						</td>
@@ -81,7 +81,6 @@
 				<p>To add a release, add it directly to the database.</p>
 			</div>
 			<div class="modal-footer">
-				@*<button type="button" class="btn btn-primary">Save changes</button>*@
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>

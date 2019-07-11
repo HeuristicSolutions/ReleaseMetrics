@@ -54,7 +54,7 @@ namespace ReleaseMetrics.Core.DataModel {
 
 			// summary views
 			builder
-				.Query<ReleaseSummary>().ToView("vReleaseSummaries");
+				.Query<ReleaseSummary>().ToView("vReleaseMetrics");
 
 			// initial data load
 			builder.Entity<Release>().HasData(

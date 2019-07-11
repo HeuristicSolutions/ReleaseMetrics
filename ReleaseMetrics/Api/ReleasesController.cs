@@ -17,7 +17,6 @@ namespace ReleaseMetrics.Api {
 		public ReleasesController(AppSettings config, MetricsDbContext db) : base(config, db) {
 		}
 
-		// TODO: find a way to encapsulate ReleaseSummary better. Map a view?
 		[HttpGet]
 		[Route("List")]
 		public List<ReleaseSummary> List() {

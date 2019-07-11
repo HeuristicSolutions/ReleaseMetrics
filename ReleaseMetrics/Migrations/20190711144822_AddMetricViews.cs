@@ -90,6 +90,8 @@ namespace ReleaseMetrics.Migrations {
 
 					select	rs.ReleaseNumber
 					,		rs.Notes
+					,		rs.StartDate
+					,		rs.EndDate
 					,		rs.WeeksInRelease
 
 					,		rs.ChoreCount
@@ -112,11 +114,12 @@ namespace ReleaseMetrics.Migrations {
 					,		rs.NewDefectPoints
 					,		rs.NewDefectMinutes
 
+					,		rs.TotalBilledMinutes
 					,		(rs.ChoreCount + rs.FeatureCount) as ShippedFeatureAndChoreCount
 					,		(rs.ChorePoints + rs.FeaturePoints) as ShippedFeatureAndChorePoints
 					,		rs.ContingencyPoints as UnusedContingencyPoints
 					,		((rs.ChoreMinutes + rs.FeatureMinutes + rs.NewDefectMinutes) / 60) / (rs.ChoreCount + rs.FeatureCount) as AvgHoursPerFeatureAndChorePoint
-					,		(rs.TotalBilledMinutes / 60) / (rs.ChoreCount + rs.FeatureCount) as FullyLoadedAvgHoursPerPoint
+					,		(rs.TotalBilledMinutes / 60.0) / (rs.ChoreCount + rs.FeatureCount) as FullyLoadedAvgHoursPerPoint
 
 					from	ReleaseSummary rs
 			");

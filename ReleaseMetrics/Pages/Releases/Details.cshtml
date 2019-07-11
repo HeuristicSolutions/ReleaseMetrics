@@ -42,10 +42,10 @@
 				<div v-bind:class="{ 'footer-counts': true, 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
 					<div class="loading-overlay"></div>
 					<span class="text-muted data-count">
-						<b>Work Items (local):</b> {{ release.featureAndChoreCount }}
+						<b>Work Items (local):</b> {{ release.shippedFeatureAndChorePoints }} points
 					</span>
 					<span class="text-muted data-count">
-						<b>Time Entries (local):</b> {{ release.timeEntryCount }}
+						<b>Time Entries (local):</b> {{ release.totalBilledMinutes }} minutes
 					</span>
 				</div>
 
