@@ -3,6 +3,11 @@
     ViewData["Title"] = "Release List";
 }
 
+<style type="text/css">
+	tr.release-top td { border-bottom: none !important }
+	tr.release-bottom td { border-top: none !important }
+</style>
+
 <div id="app">
 	<h1>Releases</h1>
 
@@ -25,29 +30,38 @@
 			<thead>
 				<tr>
 					<th scope="col">Release</th>
-					<th scope="col">Summary</th>
-					<th scope="col">Started</th>
-					<th scope="col">Released</th>
-					<th scope="col">Shipped Points</th>
+					<th scope="col">Duration</th>
+					<th scope="col">Shipped<br />Points</th>
+					<th scope="col">Billed<br />Hours</th>
+					<th scope="col">Hrs / Pt</th>
+					<th scope="col">"Fully Loaded"<br/>Hrs / Pt</th>
 					<th scope="col"></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-if="isInitialized === false">
-					<td colspan="6" class="text-center">
+					<td colspan="7" class="text-center">
 						... loading ...
 					</td>
 				</tr>
-				<tr v-for="release in releases">
-					<th scope="row">{{ release.releaseNumber }}</th>
-					<td>{{ release.notes }}</td>
-					<td class="text-nowrap">{{ release.startDate | shortDate }}</td>
-					<td class="text-nowrap">{{ release.endDate | shortDate }}</td>
-					<td>{{ release.featureAndChorePoints }}</td>
-					<td>
-						<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
-					</td>
-				</tr>
+				<template v-for="release in releases" v-bind:key="release">
+					<tr class="release-top">
+						<th scope="row" rowspan="2">{{ release.releaseNumber }}</th>
+						<td class="text-nowrap">
+							<b>TODO weeks</b> ({{ release.startDate | shortDate }} - {{ release.endDate | shortDate }})
+						</td>
+						<td>{{ release.featureAndChorePoints }}</td>
+						<td>TBD</td>
+						<td>TBD</td>
+						<td>TBD</td>
+						<td>
+							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
+						</td>
+					</tr>
+					<tr class="release-bottom">
+						<td colspan="6">{{ release.notes }}</td>
+					</tr>
+				</template>
 			</tbody>
 		</table>
 	</div>
@@ -77,10 +91,12 @@
 <script>
     var vueApp = new Vue({
         el: '#app',
+
 		data: {
 			isInitialized: false,
             releases: []
 		},
+
 		mounted() {
 			axios
 				.get("/api/Releases/List")
