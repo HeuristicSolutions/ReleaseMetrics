@@ -6,8 +6,8 @@
 }
 
 @section head {
+	<link href="~/app/ReleaseMetrics.css" rel="stylesheet" />
 	<link href="~/app/ReleaseDetails/ReleaseDetails.css" rel="stylesheet" />
-
 }
 
 <h1>Release @releaseNum</h1>
@@ -586,7 +586,7 @@
 							if (thisTimeEntry === null) {
 								console.log("Couldn't find time entry %s", thisResult.timeEntryId);
 							}
-							
+
 							thisTimeEntry.validationErrors = thisResult.errors;
 							thisTimeEntry.validationWarnings = thisResult.warnings;
 

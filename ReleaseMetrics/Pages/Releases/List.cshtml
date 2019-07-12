@@ -2,6 +2,9 @@
 @{
 	ViewData["Title"] = "Release List";
 }
+@section head {
+	<link href="~/app/ReleaseMetrics.css" rel="stylesheet" />
+}
 
 <style type="text/css">
 	tr.release-top td {
@@ -11,6 +14,8 @@
 	tr.release-bottom td {
 		border-top: none !important
 	}
+
+	.release-loading-message { color: red; }
 </style>
 
 <div id="app">
@@ -67,7 +72,14 @@
 						</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="6">{{ release.notes }}</td>
+						<td colspan="6">
+							<div v-show="release.loadingMessage == ''">
+								{{ release.notes }}
+							</div>
+							<div v-show="release.loadingMessage != ''" class="release-loading-message">
+								... {{ release.loadingMessage }} ...
+							</div>
+						</td>
 					</tr>
 				</template>
 			</tbody>
@@ -128,6 +140,9 @@
 
 		data: {
 			isInitialized: false,
+
+			// an array of ReleaseSummary objects, with additional props:
+			//	.loadingMessage = if not empty, then it indicates the release is being refreshed. The message is displayed over the row.
 			releases: [],
 
 			// which release is the "confirm jira refresh" modal being shown for?
@@ -143,39 +158,55 @@
 
 		methods: {
 
+			// returns the release from the local view model with the specified id
+			getRelease: function (releaseNum) {
+				var matches = jQuery.grep(this.$data.releases, function (r) {
+					return r.releaseNumber === releaseNum;
+				});
+
+				return (matches.length === 1)
+					? matches[0]
+					: null;
+			},
+
 			// Synchronizes the local work item cache (for work items associated with this release) with the Jira API
 			loadWorkItemsFromJira: function () {
-				this.isInitialized = false;
-
 				var app = this;
 
-				axios
-					.post('/api/WorkItems/RefreshJiraCacheForRelease?releaseNum=' + app.jiraRefreshConfirmationRelease)
-					.then(response => {
-						$("#jiraSyncConfirmationModal").modal("hide");
+				var releaseNum = app.jiraRefreshConfirmationRelease;
+				var release = app.getRelease(releaseNum);
 
+				release.loadingMessage = 'refreshing local Jira work item cache';
+
+				axios
+					.post('/api/WorkItems/RefreshJiraCacheForRelease?releaseNum=' + releaseNum)
+					.then(response => {
 						if (response.data.messages.length > 0) {
 							alert("messages found, but this page doesn't know how to show them yet");
-							//this.showMessageModal(response.data.messages);
 						}
 
-						// this.statusMessage = '... updating work item time allocation ...';
-						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=' + app.jiraRefreshConfirmationRelease);
+						release.loadingMessage = 'updating work item time allocation';
+						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=' + releaseNum);
 					})
 					.then(response => {
-						//this.statusMessage = '... refreshing page data ...';
+						release.loadingMessage = 'refreshing';
 						app.refreshReleaseGrid();
 					});
 			},
 
 			refreshReleaseGrid: function () {
-				this.isInitialized = false;
+				var app = this;
+
+				app.isInitialized = false;
 
 				axios
 					.get("/api/Releases/List")
 					.then(response => {
-						this.isInitialized = true;
-						this.releases = response.data;
+						for (var i = 0; i < response.data.length; i++) {
+							Vue.set(response.data[i], 'loadingMessage', '');
+						}
+						app.releases = response.data;
+						app.isInitialized = true;
 					});
 			}
 		},
