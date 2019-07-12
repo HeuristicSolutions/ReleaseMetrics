@@ -30,6 +30,9 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 		/// <summary>
 		/// Returns the standard tasks used for billing fixed-cost innovation work, in any project. (i.e. returns the full
 		/// set of tasks for which all innovation work in a release should have been billed to)
+		/// 
+		/// This also includes the "Defect Resolution" task so that we can count time billed to defects, and also because
+		/// feature stories are sometimes mis-billed to defect res and we want the ability to fix that locally.
 		/// </summary>
 		public async Task<List<MavenlinkTaskSearchApiResponse.StoryData>> GetAllTasksForInnovationTimeTrackingAsync(string releaseNum) {
 
@@ -53,9 +56,14 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 				.Where(x => x.Title.StartsWithIgnoringCase($"{releaseNum}: Overhead"))
 				.ToList();
 
+			var defectRes = (await GetMavenlinkTasksAsync("Defect Resolution"))
+				.Where(x => x.Title == "Defect Resolution" || x.Title.StartsWith("Unplanned Defect Resolution"))
+				.ToList();
+
 			var allTasks = plannedTasks
 				.Union(unplannedTasks)
 				.Union(overheadTasks)
+				.Union(defectRes)
 				.OrderBy(x => x.ProjectId)
 				.ThenBy(x => x.Title)
 				.ToList();

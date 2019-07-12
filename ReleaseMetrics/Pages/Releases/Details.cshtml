@@ -417,7 +417,7 @@
 			// Synchronizes time entries in the local database by reloading all time for this release from Mavenlink
 			loadTimeFromMavenlink: function () {
 				this.isLoadingTimeEntries = true;
-				this.statusMessage = '... refreshing time entries ...';
+				this.statusMessage = '... fetching time from MavenLink ...';
 
 				axios
 					.post('/api/TimeEntries/LoadTimeFromMavenlink?releaseNum=@releaseNum')
@@ -459,6 +459,7 @@
 			// Calls the server to reload the Release data shown at the top of the page
 			refreshReleaseDetails: function () {
 				this.isLoadingRelease = true;
+				this.statusMessage = '... refreshing release summary ...';
 
 				axios
 					.get('/api/Releases/Get?releaseNum=@releaseNum')

@@ -44,6 +44,22 @@ create view vReleasedWorkItemSummary as
 		,		w.EpicWorkItemId
 		,		w.StoryPoints
 		,		w.BillToClient
+		,		case w.StoryPoints
+					when 0 then 0
+					when 1 then 2
+					when 2 then 4
+					when 4 then 8
+					when 8 then 12
+					else 0
+				end as ExpectedHours_Min
+		,		case w.StoryPoints
+					when 0 then 3
+					when 1 then 10
+					when 2 then 20
+					when 4 then 40
+					when 8 then 80
+					else 100
+				end as ExpectedHours_Max
 		,		(
 					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
 					from	dbo.TimeEntryWorkItemAllocations tea
@@ -92,6 +108,12 @@ create view vReleasedWorkItemSummary as
 	,		s.StoryPoints
 	,		s.BillToClient
 	,		s.TotalHours
+	,		case
+				when s.Type in ('Feature', 'Chore') and (s.TotalHours = 0) and (StoryPoints > 0) then 'No time billed to non-zero story'
+				when s.Type in ('Feature', 'Chore') and (s.TotalHours < ExpectedHours_Min) then 'Billed hours LOWER than standard range'
+				when s.Type in ('Feature', 'Chore') and (s.TotalHours > ExpectedHours_Max) then 'Billed hours GREATER than standard range'
+				else null
+			end as BillingWarningMessage
 	,		case when s.StoryPoints = 0 then s.TotalHours else s.TotalHours / s.StoryPoints end as HoursPerPoint
 	,		s.DevHours
 	,		s.QaHours
