@@ -38,6 +38,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Migrations\20190712135358_InitialCreate_Down.sql" />
+    <None Remove="Migrations\20190712135358_InitialCreate_Up.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\20190712135358_InitialCreate_Down.sql" />
+    <EmbeddedResource Include="Migrations\20190712135358_InitialCreate_Up.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="microsoft.entityframeworkcore.proxies" Version="2.1.1" />
     <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="2.1.1" />

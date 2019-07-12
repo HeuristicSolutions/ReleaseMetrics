@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ReleaseMetrics.Migrations
@@ -66,6 +67,7 @@ namespace ReleaseMetrics.Migrations
                 {
                     StoryNumber = table.Column<string>(maxLength: 50, nullable: false),
                     ReleaseNumber = table.Column<string>(maxLength: 25, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     EpicWorkItemId = table.Column<string>(maxLength: 50, nullable: true),
                     EpicName = table.Column<string>(maxLength: 250, nullable: true),
                     Title = table.Column<string>(maxLength: 250, nullable: false),
@@ -165,37 +167,13 @@ namespace ReleaseMetrics.Migrations
                 name: "IX_WorkItems_StoryNumber",
                 table: "WorkItems",
                 column: "StoryNumber");
-			
-			migrationBuilder.Sql(@"
-				create view vReleaseSummaries as
-					select	r.ReleaseNumber,
-							r.StartDate,
-							r.EndDate,
-							r.Notes,
-							(
-								select	IsNull(sum(wi.StoryPoints), 0)
-								from	dbo.WorkItems wi
-								where	wi.ReleaseNumber = r.ReleaseNumber
-							) as TotalPoints,
-							(
-								select	count(*)
-								from	dbo.WorkItems wi
-								where	wi.ReleaseNumber = r.ReleaseNumber
-							) as WorkItemCount,
-							(
-								select	count(*)
-								from	dbo.TimeEntries te
-								where	te.ReleaseNumber = r.ReleaseNumber
-							) as TimeEntryCount
-					from	dbo.Releases r
-			");
+
+			MigrationHelper.ExecuteCustomSql(migrationBuilder, "20190712135358_InitialCreate_Up.sql");
 		}
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+		protected override void Down(MigrationBuilder migrationBuilder)
         {
-			migrationBuilder.Sql(@"
-				drop view vReleaseSummaries
-			");
+			MigrationHelper.ExecuteCustomSql(migrationBuilder, "20190712135358_InitialCreate_Down.sql");
 
 			migrationBuilder.DropTable(
                 name: "TimeEntryWorkItemAllocations");

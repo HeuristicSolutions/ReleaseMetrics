@@ -22,7 +22,7 @@ namespace ReleaseMetrics.Core.Releases {
 		public int ShippedFeatureAndChorePoints { get; set; }
 		public decimal AvgHoursPerFeatureAndChorePoint { get; set; }
 		
-		public int TotalBilledMinutes { get; set; }
+		public decimal TotalBilledHours { get; set; }
 
 		public decimal FullyLoadedAvgHoursPerPoint { get; set; }
 

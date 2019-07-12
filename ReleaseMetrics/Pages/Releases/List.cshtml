@@ -53,7 +53,7 @@
 						<td>{{ release.shippedFeatureAndChorePoints }}</td>
 						<td>TBD</td>
 						<td>TBD</td>
-						<td>{{ release.fullyLoadedAvgHoursPerPoint }}</td>
+						<td>{{ release.fullyLoadedAvgHoursPerPoint | hoursPerPt }}</td>
 						<td>
 							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
 						</td>
@@ -108,6 +108,10 @@
 		filters: {
 			shortDate: function (date) {
 				return moment(date).format('YYYY-MM-DD');
+			},
+
+			hoursPerPt: function (decimalHrsPerPt) {
+				return parseFloat(Math.round(decimalHrsPerPt * 100) / 100).toFixed(2);
 			}
 		}
     });

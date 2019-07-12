@@ -10,8 +10,8 @@ using ReleaseMetrics.Core.DataModel;
 namespace ReleaseMetrics.Migrations
 {
     [DbContext(typeof(MetricsDbContext))]
-    [Migration("20190710174717_AddWorkItemStatus")]
-    partial class AddWorkItemStatus
+    [Migration("20190712135358_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
