@@ -107,6 +107,8 @@ namespace ReleaseMetrics.Core.DataModel {
 		}
 
 		public List<TimeEntry> GetTimeEntriesForRelease(string releaseNum) {
+			// TODO: What about defect time?
+
 			// if the release ends in ".0", then the task titles will just use "x.y" and not "x.y.z"
 			if (releaseNum.EndsWith(".0")) {
 				releaseNum = releaseNum.RemoveTrailing(".0");

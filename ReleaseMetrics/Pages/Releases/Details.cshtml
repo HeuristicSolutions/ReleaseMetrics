@@ -418,13 +418,14 @@
 			loadTimeFromMavenlink: function () {
 				this.isLoadingTimeEntries = true;
 				this.statusMessage = '... fetching time from MavenLink ...';
+				$("#mavenlinkSyncConfirmationModal").modal("hide");
 
 				axios
 					.post('/api/TimeEntries/LoadTimeFromMavenlink?releaseNum=@releaseNum')
 					.then(response => {
+						this.statusMessage = '... refreshing page ...';
 						this.addValidationProperties(response.data);
 						this.$data.timeEntries = response.data;
-						$("#mavenlinkSyncConfirmationModal").modal("hide");
 						this.refreshReleaseDetails();
 						this.$data.isLoadingTimeEntries = false;
 					});
@@ -434,14 +435,13 @@
 			loadWorkItemsFromJira: function () {
 				this.isLoadingTimeEntries = true;
 				this.statusMessage = '... refreshing work items ...';
+				$("#jiraSyncConfirmationModal").modal("hide");
 
 				var app = this;
 
 				axios
 					.post('/api/WorkItems/RefreshJiraCacheForRelease?releaseNum=@releaseNum')
 					.then(response => {
-						$("#jiraSyncConfirmationModal").modal("hide");
-
 						if (response.data.messages.length > 0) {
 							this.showMessageModal(response.data.messages);
 						}
