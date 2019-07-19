@@ -24,10 +24,8 @@
 	<div class="row summary-header">
 		<div class="panel panel-info">
 			<div class="panel-body">
-				Release metrics are cached locally and are based on analysis of locally-stored data. They are not automatically updated to reflect
-				changes in Jira or Mavenlink. If the source data changes, re-generate the release metrics.<br /><br />
-				Storing the data locally makes it easier to make corrections to data, specifically the time entries, that could be difficult to
-				push back into Mavenlink after-the-fact.
+				Release metrics are calculated dynamically based on the <b>locally-stored</b> Jira and Mavenlink data. If data in the source system(s) changes, 
+				you will need to refresh the local cache before the metrics will update.<br /><br />
 			</div>
 			<div class="panel-footer text-right">
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#NewReleaseModal">Add Release</button>
@@ -42,15 +40,17 @@
 					<th scope="col">Release</th>
 					<th scope="col">Duration</th>
 					<th scope="col">Shipped<br />Points</th>
-					<th scope="col">Billed<br />Hours</th>
-					<th scope="col">Hrs / Pt</th>
+					<th scope="col">Hours<br />(Shipped)</th>
+					<th scope="col">Hrs / Pt<br />(Shipped)</th>
+					<th scope="col">Unused<br />Contingency</th>
+					<th scope="col">Hours<br />(Undelivered)</th>
 					<th scope="col">"Fully Loaded"<br />Hrs / Pt</th>
 					<th scope="col"></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-if="isInitialized === false">
-					<td colspan="7" class="text-center">
+					<td colspan="9" class="text-center">
 						... loading ...
 					</td>
 				</tr>
@@ -58,22 +58,28 @@
 					<tr class="release-top">
 						<th scope="row" rowspan="2">{{ release.releaseNumber }}</th>
 						<td class="text-nowrap">
-							<b>{{ release.weeksInRelease }} weeks</b> ({{ release.startDate | shortDate }} - {{ release.endDate | shortDate }})
+							<b>{{ release.weeksInRelease }} weeks</b>
 						</td>
 						<td>
 							{{ release.shippedFeatureAndChorePoints }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Jira data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#jiraSyncConfirmationModal" v-on:click="jiraRefreshConfirmationRelease = release.releaseNumber"></i>
 						</td>
-						<td>{{ release.totalBilledHours }}</td>
-						<td>{{ release.avgHoursPerFeatureAndChorePoint | hoursPerPt }}</td>
-						<td>{{ release.fullyLoadedAvgHoursPerPoint | hoursPerPt }}</td>
+						<td>
+							{{ release.totalBilledHours | twoDecimalPts }}
+							<i class="fas fa-sync icon-toggle" title="Reload all Mavenlink data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" v-on:click="alert('Not implemented')"></i>
+						</td>
+						<td>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</td>
+						<td>TODO</td>
+						<td>TODO</td>
+						<td>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</td>
 						<td>
 							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
 						</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="6">
+						<td colspan="8">
 							<div v-show="release.loadingMessage == ''">
+								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}<br/>
 								{{ release.notes }}
 							</div>
 							<div v-show="release.loadingMessage != ''" class="release-loading-message">
@@ -216,8 +222,8 @@
 				return moment(date).format('YYYY-MM-DD');
 			},
 
-			hoursPerPt: function (decimalHrsPerPt) {
-				return parseFloat(Math.round(decimalHrsPerPt * 100) / 100).toFixed(2);
+			twoDecimalPts: function (decimalNum) {
+				return parseFloat(Math.round(decimalNum * 100) / 100).toFixed(2);
 			}
 		}
 	});

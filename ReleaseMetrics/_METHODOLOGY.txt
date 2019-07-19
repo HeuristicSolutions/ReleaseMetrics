@@ -1,0 +1,18 @@
+﻿Release Metric methodology
+---------------------------
+
+Unused contingency points ARE NOT counted towards "shipped points". We decided that they should only be counted if they 
+are used to cover a specifically identified scope change or new requirement. If we can't allocate those points to a specific 
+piece of work that we did, that was not originally planned for, then they remain "unused".
+
+In some cases, this may correlate with "getting done quicker than planned", in which there should be some other (unplanned)
+work that we did instead. This may be other stories we pulled in, additional IA Support, whatever. In this case we don't count
+the unused contingency because we ARE counting this other work which should offset it.
+
+In other cases, the planned epic may have taken the entire allocated calendar period (based on the full point total including
+contingency) but the contingency points may remain unused. This could happen if the additional complexity the contingency was
+allocated to offset manifested as across-the-board-things-took-longer-than-planned and not a specific scope change we could
+point to. In this case, we don't count the unusued contingency and there WON'T be any other work to offset it. We agreed that
+this will show up negatively in "the numbers", because the cost/pt will go up, but that we'll need to rely on human analysis 
+to explain this. (As long as we delivered the promised work within the promised schedule then the individual epic should be
+considered a success, even if the hours per point spikes up)

@@ -13,49 +13,42 @@
 <h1>Release @releaseNum</h1>
 
 <div id="app">
-	<div v-bind:class="{ 'row': true, 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
+	<div v-bind:class="{ 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
 		<div class="loading-overlay"></div>
 
 		<div id="ReleaseDetails" class="dim-when-has-overlay">
 			<h2>Description</h2>
 			<p>{{ release.notes }}</p>
-
-			<h2>Dates</h2>
 			<p><b>{{ release.startDate | shortDate }}</b> to <b>{{ release.endDate | shortDate }}</b> (<i>{{ daysInRelease(release) }} days</i>)</p>
-		</div>
-	</div>
 
-	<div class="row summary-header">
-		<div id="Instructions" class="panel panel-info u-loading">
-			<div class="panel-body">
-				Release metrics can be processed at any time, even while the release is in progress, and will simply overwrite previously compiled metrics. <br /><br />
+			<h2>Metrics</h2>
+			<div id="Instructions" class="panel panel-info u-loading">
+				<div class="panel-body">
 
-				<b>To process release metrics:</b>
-				<ol>
-					<li>If the Work Item count is 0, or if the data in Jira has changed, use the "Refresh Jira Cache" button first</li>
-					<li>Use the "Refresh From Mavenlink" button to re-import time entries</li>
-					<li>Use the "Validate Time" button to find and fix issues with the time entries</li>
-					<li>Use the "Refresh Metrics" button to process the time entries and regenerate the metrics</li>
-				</ol>
-			</div>
-			<div class="panel-footer text-right">
-				<div v-bind:class="{ 'footer-counts': true, 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
-					<div class="loading-overlay"></div>
-					<span class="text-muted data-count">
-						<b>Work Items (local):</b> {{ release.shippedFeatureAndChorePoints }} points
-					</span>
-					<span class="text-muted data-count">
-						<b>Time Entries (local):</b> {{ release.totalBilledHours }} hours
-					</span>
+					Release metrics are calculated dynamically from <b>locally-cached</b> Jira and Mavenlink data.<br/><br/>
+					If problems are found with Jira data, please fix the data in Jira and then re-import.<br/><br/>
+					If problems are found with Mavenlink data, and the timesheet has already been submitted, then fix the data in the local cache.<br/><br/>
+					Remember to validate the time entries and correct issues before drawing any conclusions from the metrics!
 				</div>
+				<div class="panel-footer text-right">
+					<div v-bind:class="{ 'footer-counts': true, 'loading-overlay-wrapper': true, 'has-loading-overlay': isLoadingRelease }">
+						<div class="loading-overlay"></div>
+						<span class="text-muted data-count">
+							<b>Work Items (local):</b> {{ release.shippedFeatureAndChorePoints }} points
+						</span>
+						<span class="text-muted data-count">
+							<b>Time Entries (local):</b> {{ release.totalBilledHours | twoDecimalPts }} hours
+						</span>
+					</div>
 
-				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#jiraSyncConfirmationModal" :disabled="isLoadingTimeEntries">Refresh Jira Cache</button>
-				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" :disabled="isLoadingTimeEntries">Refresh Mavenlink Time</button>
-				<button type="button" class="btn btn-primary" v-on:click="validateTimeEntries" :disabled="isLoadingTimeEntries || timeEntries.length == 0" :title="validateTimeButtonTooltip">Validate Time</button>
-				<button type="button" class="btn btn-primary" v-on:click="refreshMetrics" :disabled="isLoadingTimeEntries || !timeEntriesValidated" :title="refreshMetricsButtonTooltip">Refresh Metrics</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#jiraSyncConfirmationModal" :disabled="isLoadingTimeEntries">Refresh Jira Cache</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" :disabled="isLoadingTimeEntries">Refresh Mavenlink Time</button>
+					<button type="button" class="btn btn-primary" v-on:click="validateTimeEntries" :disabled="isLoadingTimeEntries || timeEntries.length == 0" :title="validateTimeButtonTooltip">Validate Time</button>
+				</div>
 			</div>
 		</div>
 	</div>
+
 
 	<h2>Time Entries</h2>
 
@@ -73,7 +66,6 @@
 
 				<input class="form-check-input" type="radio" id="filterValidationErrorsOnly" v-model="filterValidation" value="ERRORS_ONLY" />
 				<label class="form-check-label" for="filterValidationErrorsOnly">Errors Only </label>
-
 			</div>
 		</div>
 	</form>
@@ -363,12 +355,6 @@
 				});
 			},
 
-			refreshMetricsButtonTooltip: function () {
-				return (this.timeEntriesValidated)
-					? 'Re-process all time entries and regenerate the metrics'
-					: 'You must successfully validate the time entries before you can process them';
-			},
-
 			validateTimeButtonTooltip: function () {
 				return (this.timeEntries.length > 0)
 					? 'Check time data for consistency issues'
@@ -558,7 +544,6 @@
 			},
 
 			// Runs the current data through the validation process and updates the view, showing the validation results
-			// and enabling the "refreshMetrics" button
 			validateTimeEntries: function () {
 				this.isLoadingTimeEntries = true;
 				this.statusMessage = '... validating ...';
@@ -598,12 +583,6 @@
 						this.$data.timeEntriesValidated = !hasErrors;
 						this.$data.filterValidation = 'WARNINGS_AND_ERRORS';
 					});
-			},
-
-			// Converts the local time entries into the standardized schema that is used by the metric calculations
-			refreshMetrics: function () {
-				alert("not implemented yet");
-
 			}
 		},
 
@@ -617,6 +596,10 @@
 				return (s.length <= max)
 					? s
 					: s.substring(0, max - 1) + '...';
+			},
+
+			twoDecimalPts: function (decimalNum) {
+				return parseFloat(Math.round(decimalNum * 100) / 100).toFixed(2);
 			}
 		}
     });
