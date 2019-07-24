@@ -187,13 +187,16 @@ create view vReleaseMetrics as
 	,		rs.NewDefectPoints
 	,		rs.NewDefectHours
 
-	,		rs.TotalBilledHours
 	,		(rs.ChoreCount + rs.FeatureCount) as ShippedFeatureAndChoreCount
 	,		(rs.ChorePoints + rs.FeaturePoints) as ShippedFeatureAndChorePoints
+	,		(rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) as ShippedFeatureAndChoreHours
+
 	,		rs.ContingencyPoints as UnusedContingencyPoints
+
+	,		rs.TotalBilledHours
 	,		case 
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0 
-				else (rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) / (rs.ChoreCount + rs.FeatureCount)
+				else (rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) / (rs.ChorePoints + rs.FeaturePoints)
 			end as AvgHoursPerFeatureAndChorePoint
 	,		case 
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0

@@ -107,22 +107,30 @@ namespace ReleaseMetrics.Core.DataModel {
 		}
 
 		public List<TimeEntry> GetTimeEntriesForRelease(string releaseNum) {
-			// TODO: What about defect time?
-
 			// if the release ends in ".0", then the task titles will just use "x.y" and not "x.y.z"
-			if (releaseNum.EndsWith(".0")) {
-				releaseNum = releaseNum.RemoveTrailing(".0");
-			}
+			var taskTitleSubstring = releaseNum.EndsWith(".0")
+				? releaseNum = releaseNum.RemoveTrailing(".0")
+				: releaseNum;
 
-			var timeEntries = this.TimeEntries
-				.Where(x => x.TaskTitleOrig.Contains(releaseNum))
+			var innovationTimeEntries = this.TimeEntries
+				.Where(x => x.TaskTitleOverride.Contains(taskTitleSubstring))
 				.OrderBy(x => x.ProjectTitleOverride)
 				.ThenBy(x => x.TaskTitleOverride)
 				.ThenBy(x => x.UserName)
 				.ThenBy(x => x.DatePerformed)
 				.ToList();
 
-			return timeEntries;
+			// also include any Defect Resolution time
+			var defectResTimeEntries = this.TimeEntries
+				.Where(x => x.TaskTitleOverride.Contains("Defect Resolution"))
+				.Where(x => x.ReleaseNumber == releaseNum)
+				.OrderBy(x => x.ProjectTitleOverride)
+				.ThenBy(x => x.TaskTitleOverride)
+				.ThenBy(x => x.UserName)
+				.ThenBy(x => x.DatePerformed)
+				.ToList();
+
+			return innovationTimeEntries.Union(defectResTimeEntries).ToList();
 		}
 
 		public WorkItem GetWorkItem(string id) {

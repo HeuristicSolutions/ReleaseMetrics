@@ -66,7 +66,7 @@ namespace ReleaseMetrics.Core.TimeEntries {
 			// delete local entries for the related innovation projects NOT in the server payload
 			var projectIds = rawTimeData.Select(x => x.ProjectId).Distinct().ToList();
 
-			// TODO: delete
+			// TODO: delete anything removed from Release X and added to Release Y?
 
 			return returnData;
 		}

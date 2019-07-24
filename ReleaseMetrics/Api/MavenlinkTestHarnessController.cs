@@ -10,7 +10,7 @@ using ReleaseMetrics.Core.TimeEntries;
 namespace ReleaseMetrics.Api {
 
 	/// <summary>
-	/// Exposes endpoints for manually testing facets of the Jira API
+	/// Exposes endpoints for manually testing facets of the Mavenlink API
 	/// </summary>
 	[Produces("application/json")]
 	[Route("api/[controller]")]

@@ -43,32 +43,32 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 				releaseNum = releaseNum.RemoveTrailing(".0");
 			}
 
-			// the search method targets fields other than title, but we only want things where the title matches the pattern
-			var plannedTasks = (await GetMavenlinkTasksAsync($"{releaseNum}: Planned"))
-				.Where(x => x.Title.StartsWithIgnoringCase($"{releaseNum}: Planned"))
-				.ToList();
+			var searchStrings = new List<string> {
+				$"{releaseNum}: Planned",
+				$"{releaseNum} Planned",
+				$"{releaseNum}: Unplanned",
+				$"{releaseNum} Unplanned",
+				$"{releaseNum}: Overhead",
+				$"{releaseNum} Overhead",
+				"Defect Resolution",			// need to count time billed to defects as well as stories
+				"Unplanned Defect Resolution"
+			};
 
-			var unplannedTasks = (await GetMavenlinkTasksAsync($"{releaseNum}: Unplanned"))
-				.Where(x => x.Title.StartsWithIgnoringCase($"{releaseNum}: Unplanned"))
-				.ToList();
+			var allTasks = new List<MavenlinkTaskSearchApiResponse.StoryData>();
+			foreach (var searchString in searchStrings) {
+				// the search method targets fields other than title, but we only want things where the *title* matches the pattern,
+				// so we first 
+				var tasks = (await GetMavenlinkTasksAsync(searchString))
+					.Where(x => x.Title.StartsWithIgnoringCase(searchString))
+					.ToList();
 
-			var overheadTasks = (await GetMavenlinkTasksAsync($"{releaseNum}: Overhead"))
-				.Where(x => x.Title.StartsWithIgnoringCase($"{releaseNum}: Overhead"))
-				.ToList();
+				allTasks.AddRange(tasks);
+			}
 
-			var defectRes = (await GetMavenlinkTasksAsync("Defect Resolution"))
-				.Where(x => x.Title == "Defect Resolution" || x.Title.StartsWith("Unplanned Defect Resolution"))
-				.ToList();
-
-			var allTasks = plannedTasks
-				.Union(unplannedTasks)
-				.Union(overheadTasks)
-				.Union(defectRes)
+			return allTasks
 				.OrderBy(x => x.ProjectId)
 				.ThenBy(x => x.Title)
 				.ToList();
-
-			return allTasks;
 		}
 
 		/// <summary>

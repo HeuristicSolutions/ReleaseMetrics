@@ -1,6 +1,12 @@
 ﻿Release Metric methodology
----------------------------
+===========================
 
+Overall process
+---------------------------
+1) Get all time entries
+
+Contingency Points
+---------------------------
 Unused contingency points ARE NOT counted towards "shipped points". We decided that they should only be counted if they 
 are used to cover a specifically identified scope change or new requirement. If we can't allocate those points to a specific 
 piece of work that we did, that was not originally planned for, then they remain "unused".
@@ -16,3 +22,9 @@ point to. In this case, we don't count the unusued contingency and there WON'T b
 this will show up negatively in "the numbers", because the cost/pt will go up, but that we'll need to rely on human analysis 
 to explain this. (As long as we delivered the promised work within the promised schedule then the individual epic should be
 considered a success, even if the hours per point spikes up)
+
+
+
+
+
+TODO: Figure out how to handle stuff like LB-503, which is work related to the current release that was billed to defect res

@@ -85,6 +85,36 @@
 			</div>
 
 			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/TimeEntries/LoadTimeFromMavenlink</div>
+				<div class="panel-body">
+					<div class="description">
+						Queries Mavenlink for all time entries relating to the release and then merges those changes into the local database. Time entries that have been deleted
+						in ML will be deleted from the local cache, and time entries that have <i>newer</i> changes in ML than the local copy are updated. Time entries that have 
+						local changes that are newer than the source data are not updated. <b>This test modifies the database!</b>
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-danger" v-on:click="autoBindAndTestApi" data-api-url="/Api/TimeEntries/LoadTimeFromMavenlink?releaseNum={releaseNum}" data-api-method="POST">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading api-name">/TimeEntries/RefreshWorkItemTimeAllocation</div>
+				<div class="panel-body">
+					<div class="description">
+						Deletes the local time entry work allocations and re-creates them by re-scanning the local work item and time entry cache. <b>This test modifies the database!</b>
+					</div>
+
+					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">
+						<input type="text" class="form-control releaseNum js-bind-releaseNum" placeholder="release: x.y.z" />
+						<button type="button" class="btn btn-danger" v-on:click="autoBindAndTestApi" data-api-url="/Api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum={releaseNum}" data-api-method="POST">Test</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
 				<div class="panel-heading api-name">/TimeEntries/ValidateEntriesForRelease</div>
 				<div class="panel-body">
 					<div class="description">
@@ -205,7 +235,7 @@
 				<div class="panel-heading api-name">/JiraTestHarness/RefreshLocalJiraStoryCacheForRelease</div>
 				<div class="panel-body">
 					<div class="description">
-						Deletes the local cache of work items for the specified release and re-loads them from Jira. <b>This is a destructive test!</b>
+						Deletes the local cache of work items for the specified release and re-loads them from Jira. <b>This test modifies the database!</b>
 					</div>
 
 					<form class="form-inline" v-on:submit.prevent="clickDefaultButton">

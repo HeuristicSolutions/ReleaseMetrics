@@ -16,6 +16,7 @@
 	}
 
 	.release-loading-message { color: red; }
+	.release-duration { font-weight: normal; color: silver; padding-top: 10px; }
 </style>
 
 <div id="app">
@@ -24,7 +25,7 @@
 	<div class="row summary-header">
 		<div class="panel panel-info">
 			<div class="panel-body">
-				Release metrics are calculated dynamically based on the <b>locally-stored</b> Jira and Mavenlink data. If data in the source system(s) changes, 
+				Release metrics are calculated dynamically based on the <b>locally-stored</b> Jira and Mavenlink data. If data in the source system(s) changes,
 				you will need to refresh the local cache before the metrics will update.<br /><br />
 			</div>
 			<div class="panel-footer text-right">
@@ -38,12 +39,13 @@
 			<thead>
 				<tr>
 					<th scope="col">Release</th>
-					<th scope="col">Duration</th>
 					<th scope="col">Shipped<br />Points</th>
 					<th scope="col">Hours<br />(Shipped)</th>
 					<th scope="col">Hrs / Pt<br />(Shipped)</th>
 					<th scope="col">Unused<br />Contingency</th>
 					<th scope="col">Hours<br />(Undelivered)</th>
+					<th scope="col">Legacy<br />Defects<br />Fixed</th>
+					<th scope="col">Defect<br />Hours</th>
 					<th scope="col">"Fully Loaded"<br />Hrs / Pt</th>
 					<th scope="col"></th>
 				</tr>
@@ -56,30 +58,33 @@
 				</tr>
 				<template v-for="release in releases" v-bind:key="release">
 					<tr class="release-top">
-						<th scope="row" rowspan="2">{{ release.releaseNumber }}</th>
-						<td class="text-nowrap">
-							<b>{{ release.weeksInRelease }} weeks</b>
-						</td>
+						<th scope="row" rowspan="2">
+							{{ release.releaseNumber }}
+							<i class="fas fa-sync icon-toggle" title="Complete re-load all Jira and Mavenlink data for this release" style="color: #ffb2b2" data-toggle="modal" data-target="#syncEverythingConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
+							<div class="text-nowrap release-duration">{{ release.weeksInRelease }} weeks</div>
+						</th>
 						<td>
 							{{ release.shippedFeatureAndChorePoints }}
-							<i class="fas fa-sync icon-toggle" title="Reload all Jira data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#jiraSyncConfirmationModal" v-on:click="jiraRefreshConfirmationRelease = release.releaseNumber"></i>
+							<i class="fas fa-sync icon-toggle" title="Reload all Jira data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#jiraSyncConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
 						</td>
 						<td>
-							{{ release.totalBilledHours | twoDecimalPts }}
+							{{ release.shippedFeatureAndChoreHours | twoDecimalPts }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Mavenlink data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" v-on:click="alert('Not implemented')"></i>
 						</td>
-						<td>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</td>
+						<td><b>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</b></td>
 						<td>TODO</td>
 						<td>TODO</td>
-						<td>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</td>
-						<td>
+						<td>{{ release.legacyDefectCount}} </td>
+						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
+						<td><b>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</b></td>
+						<td rowspan="2">
 							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
 						</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="8">
+						<td colspan="7">
 							<div v-show="release.loadingMessage == ''">
-								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}<br/>
+								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}<br />
 								{{ release.notes }}
 							</div>
 							<div v-show="release.loadingMessage != ''" class="release-loading-message">
@@ -92,21 +97,50 @@
 		</table>
 	</div>
 
+	<!-- refresh everything confirmation modal -->
+	<div class="modal fade" id="syncEverythingConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="syncEverythingModalTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="syncEverythingModalTitle">Refresh ALL data for {{ releaseNumForConfirmationModal }}?</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					This will:
+					<ol>
+						<li>Delete (from the local database) and re-load all Jira work items for the release</li>
+						<li>Delete (from the local database) all Time Entry Work Allocation records for the release</li>
+						<li>Re-sync the local Mavenlink database, which will reload all Mavenlink time entries <i>unless</i> there are local changes newer than the server record</li>
+						<li>Re-create the Time Entry Work Allocation records in the local database</li>
+					</ol>
+					Basically, this is a full re-sync of the release data, but without discarding any local time entry changes.<br/><br/>
+					<b>This may take a few minutes to complete.</b>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="refreshEntireRelease" :disabled="!isInitialized">Refresh Everything</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- jira refresh confirmation modal -->
 	<div class="modal fade" id="jiraSyncConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="jiraSyncModalTitle" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="jiraSyncModalTitle">Refresh Jira Stories for {{ jiraRefreshConfirmationRelease }}?</h3>
+					<h3 class="modal-title" id="jiraSyncModalTitle">Refresh Jira Stories for {{ releaseNumForConfirmationModal }}?</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
 					To improve performance, Jira data is cached in a local database. If data in Jira has changed, the local cache should be manually updated BEFORE you process
-					time entries for that release.<br/><br/>
-					Unlike the time entry data, you SHOULD NOT be making any modifications to the locally-stored work item data. This data doesn't impact 
-					invoicing and can therefore be modified at any time, so if a data issue is found please fix it in the source system (Jira) 
+					time entries for that release.<br /><br />
+					Unlike the time entry data, you SHOULD NOT be making any modifications to the locally-stored work item data. This data doesn't impact
+					invoicing and can therefore be modified at any time, so if a data issue is found please fix it in the source system (Jira)
 					and then refresh the local cache. <br /><br />
 					<b>This will also re-calculate the Work Item Time Allocations</b>, which may take a few moments if there are lots of time entries.
 				</div>
@@ -151,8 +185,9 @@
 			//	.loadingMessage = if not empty, then it indicates the release is being refreshed. The message is displayed over the row.
 			releases: [],
 
-			// which release is the "confirm jira refresh" modal being shown for?
-			jiraRefreshConfirmationRelease: null,
+			// HACK: used to track which release a confirmation was triggered for, so that we can pass that value into the event handler
+			// on the submit button that submits the confirmation modal. This seems hacky; is there a better way?
+			releaseNumForConfirmationModal: null,
 
 			// validation messages displayed in a modal
 			messageModalContents: [],
@@ -179,7 +214,7 @@
 			loadWorkItemsFromJira: function () {
 				var app = this;
 
-				var releaseNum = app.jiraRefreshConfirmationRelease;
+				var releaseNum = app.releaseNumForConfirmationModal;
 				var release = app.getRelease(releaseNum);
 
 				release.loadingMessage = 'refreshing local Jira work item cache';
@@ -191,6 +226,35 @@
 							alert("messages found, but this page doesn't know how to show them yet");
 						}
 
+						release.loadingMessage = 'updating work item time allocation';
+						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=' + releaseNum);
+					})
+					.then(response => {
+						release.loadingMessage = 'refreshing';
+						app.refreshReleaseGrid();
+					});
+			},
+
+			// Re-syncs the Jira stories, Mavenlink time entries, and time allocation records for a single release
+			refreshEntireRelease: function () {
+				var app = this;
+
+				var releaseNum = app.releaseNumForConfirmationModal;
+				var release = app.getRelease(releaseNum);
+
+				release.loadingMessage = 'refreshing local Jira work item cache';
+
+				axios
+					.post('/api/WorkItems/RefreshJiraCacheForRelease?releaseNum=' + releaseNum)
+					.then(response => {
+						if (response.data.messages.length > 0) {
+							alert("messages found, but this page doesn't know how to show them yet");
+						}
+
+						release.loadingMessage = 're-loading time entries from Mavenlink';
+						return axios.post('/api/TimeEntries/LoadTimeFromMavenlink?releaseNum=' + releaseNum);
+					})
+					.then(response => {
 						release.loadingMessage = 'updating work item time allocation';
 						return axios.post('/api/TimeEntries/RefreshWorkItemTimeAllocation?releaseNum=' + releaseNum);
 					})
