@@ -18,6 +18,9 @@
 	.release-loading-message { color: red; }
 	.release-duration { font-weight: normal; color: silver; }
 	.release-icons { padding-top: 10px; }
+
+	th.group-header { text-align: center; }
+	th.group-divider, td.group-divider { border-right: 1px solid #ddd; }
 </style>
 
 <div id="app">
@@ -39,33 +42,38 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th scope="col" rowspan="2">Release</th>
-					<th scope="col" colspan="3">Shipped Stories</th>
-					<th scope="col" colspan="2">Not Shipped</th>
-					<th scope="col" colspan="2">Defects</th>
-					<th scope="col" rowspan="2">"Fully Loaded"<br />Hrs / Pt</th>
-					<th scope="col" rowspan="2"></th>
+					<th scope="col" rowspan="2" class="group-header group-divider">Release</th>
+					<th scope="col" colspan="4" class="group-header group-divider">Shipped Stories</th>
+					<th scope="col" colspan="2" class="group-header group-divider">Legacy Defects Fixed</th>
+					<th scope="col" colspan="2" class="group-header group-divider">Not Shipped</th>
+					<th scope="col" colspan="3" class="group-header group-divider">Accuracy</th>
 				</tr>
 				<tr>
 					<th scope="col">Points</th>
 					<th scope="col">Hours</th>
 					<th scope="col">Hrs / Pt</th>
+					<th scope="col" class="group-divider">"Fully Loaded"<br />Hrs / Pt</th>
+					<th scope="col">Count</th>
+					<th scope="col" class="group-divider">Total Hours</th>
 					<th scope="col">Unused<br />Contingency</th>
-					<th scope="col">Hours</th>
-					<th scope="col">Legacy<br />Count</th>
-					<th scope="col">Legacy<br />Hours</th>
+					<th scope="col" class="group-divider">Hours on<br />Undelivered</th>
+					<th scope="col">Planned<br />Points</th>
+					<th scope="col">Unplanned<br />Points</th>
+					<th scope="col">Ratio</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-if="isInitialized === false">
-					<td colspan="9" class="text-center">
+					<td colspan="12" class="text-center">
 						... loading ...
 					</td>
 				</tr>
 				<template v-for="release in releases" v-bind:key="release">
 					<tr class="release-top">
 						<th scope="row" rowspan="2">
-							{{ release.releaseNumber }}
+							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber">
+								{{ release.releaseNumber }}
+							</a>
 							<div class="text-nowrap release-icons">
 								<i class="fas fa-sync icon-toggle" title="Complete re-load all Jira and Mavenlink data for this release" style="color: #ffb2b2" data-toggle="modal" data-target="#syncEverythingConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
 								<i class="fas fa-check-double icon-toggle" title="Check for validation errors in the time entry data for this release" style="color: #6d99ff" data-toggle="modal" data-target="#validateReleaseConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
@@ -80,17 +88,17 @@
 							<i class="fas fa-sync icon-toggle" title="Reload all Mavenlink data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" v-on:click="alert('Not implemented')"></i>
 						</td>
 						<td><b>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</b></td>
-						<td>TODO</td>
-						<td>{{ release.unshippedHours | twoDecimalPts }}</td>
+						<td class="group-divider"><b>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</b></td>
 						<td>{{ release.legacyDefectCount}} </td>
-						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
-						<td><b>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</b></td>
-						<td rowspan="2">
-							<a v-bind:href="'/Releases/Details?releaseNum=' + release.releaseNumber" class="btn btn-primary">View</a>
-						</td>
+						<td class="group-divider">{{ release.legacyDefectHours | twoDecimalPts }}</td>
+						<td>{{ release.unusedContingencyPoints }}</td>
+						<td class="group-divider">{{ release.unshippedHours | twoDecimalPts }}</td>
+						<td>TODO</td>
+						<td>TODO</td>
+						<td class="group-divider">TODO</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="7">
+						<td colspan="10">
 							<div v-show="release.loadingMessage == ''">
 								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}
 								&nbsp;&nbsp;<span class="release-duration">{{ release.weeksInRelease }} weeks</span>

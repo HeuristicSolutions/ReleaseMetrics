@@ -118,6 +118,7 @@ create view vShippedWorkItemSummary as
 				when s.Type in ('Feature', 'Chore') and (s.TotalHours = 0) and (StoryPoints > 0) then 'No time billed to non-zero story'
 				when s.Type in ('Feature', 'Chore') and (s.TotalHours < ExpectedHours_Min) then 'Billed hours LOWER than standard range'
 				when s.Type in ('Feature', 'Chore') and (s.TotalHours > ExpectedHours_Max) then 'Billed hours GREATER than standard range'
+				when s.Type in ('Contingency') and (s.TotalHours > 0) then 'Time billed directly to a Contingency case'
 				else null
 			end as BillingWarningMessage
 	,		case when s.StoryPoints = 0 then s.TotalHours else s.TotalHours / s.StoryPoints end as HoursPerPoint
@@ -223,17 +224,16 @@ create view vReleaseMetrics as
 			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureCount
 			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyPoints
-			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency') as ContingencyHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectPoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectHours
 		
 			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectPoints
 			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectCount
 			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectPoints
-			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as UnusedContingencyPoints
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency') as ContingencyHours
 
 			,		( select isnull(sum(wi.TotalHours), 0) from vUnshippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber) as UnshippedHours
 			,		( select (isnull(sum(te.DurationMinutesOverride), 0.0) / 60.0) from dbo.TimeEntries te where te.ReleaseNumber = r.ReleaseNumber) as TotalBilledHours
@@ -255,23 +255,20 @@ create view vReleaseMetrics as
 	,		rs.FeaturePoints
 	,		rs.FeatureHours
 
-	,		rs.ContingencyCount
-	,		rs.ContingencyPoints
-	,		rs.ContingencyHours
+	,		rs.NewDefectCount
+	,		rs.NewDefectPoints
+	,		rs.NewDefectHours
 
 	,		rs.LegacyDefectCount
 	,		rs.LegacyDefectPoints
 	,		rs.LegacyDefectHours
 
-	,		rs.NewDefectCount
-	,		rs.NewDefectPoints
-	,		rs.NewDefectHours
+	,		rs.UnusedContingencyPoints
+	,		rs.ContingencyHours
 
 	,		(rs.ChoreCount + rs.FeatureCount) as ShippedFeatureAndChoreCount
 	,		(rs.ChorePoints + rs.FeaturePoints) as ShippedFeatureAndChorePoints
 	,		(rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) as ShippedFeatureAndChoreHours
-
-	,		rs.ContingencyPoints as UnusedContingencyPoints
 
 	,		rs.UnshippedHours
 	,		rs.TotalBilledHours

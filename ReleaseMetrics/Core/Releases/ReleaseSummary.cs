@@ -29,6 +29,8 @@ namespace ReleaseMetrics.Core.Releases {
 		public decimal UnshippedHours { get; set; }
 		public decimal TotalBilledHours { get; set; }
 
+		public int UnusedContingencyPoints { get; set; }
+
 		public decimal FullyLoadedAvgHoursPerPoint { get; set; }
 
 		public ReleaseSummary() {
