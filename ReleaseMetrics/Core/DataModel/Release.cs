@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace ReleaseMetrics.Core.DataModel {
 
@@ -26,12 +27,14 @@ namespace ReleaseMetrics.Core.DataModel {
 		/// All work items associated with the release. 
 		/// </summary>
 		[JsonIgnore]
+		[IgnoreDataMember]
 		public virtual ICollection<WorkItem> WorkItems { get; set; }
 
 		/// <summary>
 		/// All time entries billed to the release. Not all time entries must be associated with a work item!
 		/// </summary>
 		[JsonIgnore]
+		[IgnoreDataMember]
 		public virtual ICollection<TimeEntry> TimeEntries { get; set; }
 	}
 }

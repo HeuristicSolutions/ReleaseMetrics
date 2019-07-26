@@ -158,7 +158,7 @@ namespace ReleaseMetrics.Core.TimeEntries {
 		}
 
 		private void AllocateTimeToWorkItems(TimeEntry timeEntry) {
-			var referencedStoryIds = MavenlinkHelper.GetJiraStoryIds(timeEntry.NotesOrig);
+			var referencedStoryIds = MavenlinkHelper.GetJiraStoryIds(timeEntry.NotesOverride);
 
 			if (referencedStoryIds.Count == 0)
 				return;

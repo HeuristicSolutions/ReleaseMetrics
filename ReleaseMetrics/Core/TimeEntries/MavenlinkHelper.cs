@@ -20,6 +20,9 @@ namespace ReleaseMetrics.Core.TimeEntries {
 			if (taskTitle.ContainsIgnoringCase("planned"))
 				return BillingClassificationEnum.Planned;
 
+			if (taskTitle.ContainsIgnoringCase("defect resolution"))
+				return BillingClassificationEnum.Unplanned;
+
 			throw new ApplicationException($"Could not map task '{taskTitle}' to Planned, Unplanned, or Overhead");
 		}
 

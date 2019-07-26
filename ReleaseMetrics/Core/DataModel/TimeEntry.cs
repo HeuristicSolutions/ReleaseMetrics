@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using Heuristics.Library.Extensions;
 using Newtonsoft.Json;
 using ReleaseMetrics.Core.TimeEntries;
@@ -25,6 +26,7 @@ namespace ReleaseMetrics.Core.DataModel {
 
 		[MaxLength(25)]
 		public string ReleaseNumber { get; set; }
+
 		public virtual Release Release { get; set; }
 
 		[Required]
@@ -118,6 +120,7 @@ namespace ReleaseMetrics.Core.DataModel {
 		/// validation system to spot these issues)
 		/// </summary>
 		[JsonIgnore]
+		[IgnoreDataMember]
 		public virtual List<TimeEntryWorkItemAllocation> WorkItems { get; set; }
 
 		/// <summary>

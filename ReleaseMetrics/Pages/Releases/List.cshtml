@@ -16,7 +16,8 @@
 	}
 
 	.release-loading-message { color: red; }
-	.release-duration { font-weight: normal; color: silver; padding-top: 10px; }
+	.release-duration { font-weight: normal; color: silver; }
+	.release-icons { padding-top: 10px; }
 </style>
 
 <div id="app">
@@ -34,20 +35,25 @@
 		</div>
 	</div>
 
-	<div class="row">
+	<span class="row">
 		<table class="table">
 			<thead>
 				<tr>
-					<th scope="col">Release</th>
-					<th scope="col">Shipped<br />Points</th>
-					<th scope="col">Hours<br />(Shipped)</th>
-					<th scope="col">Hrs / Pt<br />(Shipped)</th>
+					<th scope="col" rowspan="2">Release</th>
+					<th scope="col" colspan="3">Shipped Stories</th>
+					<th scope="col" colspan="2">Not Shipped</th>
+					<th scope="col" colspan="2">Defects</th>
+					<th scope="col" rowspan="2">"Fully Loaded"<br />Hrs / Pt</th>
+					<th scope="col" rowspan="2"></th>
+				</tr>
+				<tr>
+					<th scope="col">Points</th>
+					<th scope="col">Hours</th>
+					<th scope="col">Hrs / Pt</th>
 					<th scope="col">Unused<br />Contingency</th>
-					<th scope="col">Hours<br />(Undelivered)</th>
-					<th scope="col">Legacy<br />Defects<br />Fixed</th>
-					<th scope="col">Defect<br />Hours</th>
-					<th scope="col">"Fully Loaded"<br />Hrs / Pt</th>
-					<th scope="col"></th>
+					<th scope="col">Hours</th>
+					<th scope="col">Legacy<br />Count</th>
+					<th scope="col">Legacy<br />Hours</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -60,8 +66,10 @@
 					<tr class="release-top">
 						<th scope="row" rowspan="2">
 							{{ release.releaseNumber }}
-							<i class="fas fa-sync icon-toggle" title="Complete re-load all Jira and Mavenlink data for this release" style="color: #ffb2b2" data-toggle="modal" data-target="#syncEverythingConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
-							<div class="text-nowrap release-duration">{{ release.weeksInRelease }} weeks</div>
+							<div class="text-nowrap release-icons">
+								<i class="fas fa-sync icon-toggle" title="Complete re-load all Jira and Mavenlink data for this release" style="color: #ffb2b2" data-toggle="modal" data-target="#syncEverythingConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
+								<i class="fas fa-check-double icon-toggle" title="Check for validation errors in the time entry data for this release" style="color: #6d99ff" data-toggle="modal" data-target="#validateReleaseConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
+							</div>
 						</th>
 						<td>
 							{{ release.shippedFeatureAndChorePoints }}
@@ -73,7 +81,7 @@
 						</td>
 						<td><b>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</b></td>
 						<td>TODO</td>
-						<td>TODO</td>
+						<td>{{ release.unshippedHours | twoDecimalPts }}</td>
 						<td>{{ release.legacyDefectCount}} </td>
 						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
 						<td><b>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</b></td>
@@ -84,7 +92,9 @@
 					<tr class="release-bottom">
 						<td colspan="7">
 							<div v-show="release.loadingMessage == ''">
-								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}<br />
+								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}
+								&nbsp;&nbsp;<span class="release-duration">{{ release.weeksInRelease }} weeks</span>
+								<br />
 								{{ release.notes }}
 							</div>
 							<div v-show="release.loadingMessage != ''" class="release-loading-message">
@@ -115,7 +125,7 @@
 						<li>Re-sync the local Mavenlink database, which will reload all Mavenlink time entries <i>unless</i> there are local changes newer than the server record</li>
 						<li>Re-create the Time Entry Work Allocation records in the local database</li>
 					</ol>
-					Basically, this is a full re-sync of the release data, but without discarding any local time entry changes.<br/><br/>
+					Basically, this is a full re-sync of the release data, but without discarding any local time entry changes.<br /><br />
 					<b>This may take a few minutes to complete.</b>
 				</div>
 				<div class="modal-footer">
@@ -147,6 +157,29 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 					<button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="loadWorkItemsFromJira" :disabled="!isInitialized">Refresh Jira Cache</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- validate time confirmation modal -->
+	<div class="modal fade" id="validateReleaseConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="validateReleaseModalTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="validateReleaseModalTitle">Validate Time Entries for {{ releaseNumForConfirmationModal }}?</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					The validation check may take a few seconds.<br/><br/>
+					If errors are found in the Jira data, please correct those errors directly in Jira and then refresh the Jira cache.<br/><br/>
+					If errors are found in Mavenlink data that has already been submitted, please correct those errors locally.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="validateRelease" :disabled="!isInitialized">Validate Release</button>
 				</div>
 			</div>
 		</div>
@@ -278,7 +311,40 @@
 						app.releases = response.data;
 						app.isInitialized = true;
 					});
-			}
+			},
+
+			// Checks for validation errors. If found, displays them in a modal for inline editing.
+			validateRelease: function () {
+				var app = this;
+
+				var releaseNum = app.releaseNumForConfirmationModal;
+				var release = app.getRelease(releaseNum);
+
+				release.loadingMessage = 'validating';
+
+				axios
+					.get('/api/TimeEntries/ValidateEntriesForRelease?releaseNum=' + releaseNum)
+					.then(response => {
+
+						var payload = response.data;
+
+						var hasErrors = false;
+
+						for (var i = 0; i < payload.length; i++) {
+							var thisResult = payload[i];
+							var thisTimeEntry = vm.getTimeEntry(thisResult.timeEntryId);
+
+							if (thisTimeEntry === null) {
+								console.log("Couldn't find time entry %s", thisResult.timeEntryId);
+							}
+
+							thisTimeEntry.validationErrors = thisResult.errors;
+							thisTimeEntry.validationWarnings = thisResult.warnings;
+
+							hasErrors = hasErrors || (thisResult.errors.length > 0);
+						}
+					});
+			},
 		},
 
 		filters: {

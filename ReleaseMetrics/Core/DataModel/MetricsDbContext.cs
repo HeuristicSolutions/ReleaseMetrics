@@ -109,7 +109,7 @@ namespace ReleaseMetrics.Core.DataModel {
 		public List<TimeEntry> GetTimeEntriesForRelease(string releaseNum) {
 			// if the release ends in ".0", then the task titles will just use "x.y" and not "x.y.z"
 			var taskTitleSubstring = releaseNum.EndsWith(".0")
-				? releaseNum = releaseNum.RemoveTrailing(".0")
+				? releaseNum.RemoveTrailing(".0")
 				: releaseNum;
 
 			var innovationTimeEntries = this.TimeEntries

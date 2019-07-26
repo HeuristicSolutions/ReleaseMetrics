@@ -26,15 +26,16 @@ create view vReleaseSummaries as
 				select	count(*)
 				from	dbo.TimeEntries te
 				where	te.ReleaseNumber = r.ReleaseNumber
+						and Ignore = 0
 			) as TimeEntryCount
 	from	dbo.Releases r
 go
 
--- vReleasedWorkItemSummary
-if exists(select 1 from sys.views where name='vReleasedWorkItemSummary' and type='v')
-drop view vReleasedWorkItemSummary;
+-- vShippedWorkItemSummary
+if exists(select 1 from sys.views where name='vShippedWorkItemSummary' and type='v')
+drop view vShippedWorkItemSummary;
 go
-create view vReleasedWorkItemSummary as
+create view vShippedWorkItemSummary as
 	with ShippedStories as (
 		select	w.StoryNumber
 		,		w.Type
@@ -65,6 +66,7 @@ create view vReleasedWorkItemSummary as
 					from	dbo.TimeEntryWorkItemAllocations tea
 							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
 					where	tea.WorkItemId = w.StoryNumber
+							and te.Ignore = 0
 				) as TotalHours
 		,		(
 					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
@@ -72,6 +74,7 @@ create view vReleasedWorkItemSummary as
 							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
 					where	tea.WorkItemId = w.StoryNumber
 							and te.Discipline = 'Dev'
+							and te.Ignore = 0
 				) as DevHours
 		,		(
 					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
@@ -79,6 +82,7 @@ create view vReleasedWorkItemSummary as
 							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
 					where	tea.WorkItemId = w.StoryNumber
 							and te.Discipline = 'QA'
+							and te.Ignore = 0
 				) as QaHours
 		,		(
 					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
@@ -86,6 +90,7 @@ create view vReleasedWorkItemSummary as
 							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
 					where	tea.WorkItemId = w.StoryNumber
 							and te.Discipline = 'UIUX'
+							and te.Ignore = 0
 				) as UiUxHours
 		,		(
 					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
@@ -93,6 +98,7 @@ create view vReleasedWorkItemSummary as
 							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
 					where	tea.WorkItemId = w.StoryNumber
 							and te.Discipline = 'Other'
+							and te.Ignore = 0
 				) as OtherHours
 		from	dbo.WorkItems w
 		where	w.Status = 'Shipped'
@@ -122,6 +128,79 @@ create view vReleasedWorkItemSummary as
 	from	ShippedStories s
 go
 
+-- vUnshippedWorkItemSummary
+if exists(select 1 from sys.views where name='vUnshippedWorkItemSummary' and type='v')
+drop view vUnshippedWorkItemSummary;
+go
+create view vUnshippedWorkItemSummary as
+	with UnshippedStories as (
+		select	w.StoryNumber
+		,		w.Type
+		,		w.Title
+		,		w.ReleaseNumber
+		,		w.Status
+		,		w.EpicWorkItemId
+		,		w.StoryPoints
+		,		w.BillToClient
+		,		(
+					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
+					from	dbo.TimeEntryWorkItemAllocations tea
+							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
+					where	tea.WorkItemId = w.StoryNumber
+							and te.Ignore = 0
+				) as TotalHours
+		,		(
+					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
+					from	dbo.TimeEntryWorkItemAllocations tea
+							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
+					where	tea.WorkItemId = w.StoryNumber
+							and te.Discipline = 'Dev'
+							and te.Ignore = 0
+				) as DevHours
+		,		(
+					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
+					from	dbo.TimeEntryWorkItemAllocations tea
+							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
+					where	tea.WorkItemId = w.StoryNumber
+							and te.Discipline = 'QA'
+							and te.Ignore = 0
+				) as QaHours
+		,		(
+					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
+					from	dbo.TimeEntryWorkItemAllocations tea
+							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
+					where	tea.WorkItemId = w.StoryNumber
+							and te.Discipline = 'UIUX'
+							and te.Ignore = 0
+				) as UiUxHours
+		,		(
+					select	isnull(sum(tea.DurationMinutes), 0) / 60.0
+					from	dbo.TimeEntryWorkItemAllocations tea
+							inner join dbo.TimeEntries te on tea.TimeEntryId = te.Id
+					where	tea.WorkItemId = w.StoryNumber
+							and te.Discipline = 'Other'
+							and te.Ignore = 0
+				) as OtherHours
+		from	dbo.WorkItems w
+		where	w.Status <> 'Shipped'
+				and w.Type not in ('ArchitecturalIssue', 'Epic')
+	)
+
+	select	s.StoryNumber
+	,		s.Type
+	,		s.Title
+	,		s.ReleaseNumber
+	,		s.Status
+	,		s.EpicWorkItemId
+	,		s.StoryPoints
+	,		s.BillToClient
+	,		s.TotalHours
+	,		s.DevHours
+	,		s.QaHours
+	,		s.UiUxHours
+	,		s.OtherHours
+	from	UnshippedStories s
+go
 
 -- vReleaseMetrics
 if exists(select 1 from sys.views where name='vReleaseMetrics' and type='v')
@@ -136,26 +215,27 @@ create view vReleaseMetrics as
 			,		r.EndDate
 			,		DateDiff(week, r.StartDate, r.EndDate) as WeeksInRelease
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChorePoints
-			,		( select count(*) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChorePoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeaturePoints
-			,		( select count(*) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeaturePoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Feature') as FeatureHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyPoints
-			,		( select count(*) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency') as ContingencyHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyPoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency' and wi.StoryPoints > 0) as ContingencyCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Contingency') as ContingencyHours
 		
-			,		( select isnull(sum(wi.StoryPoints), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectPoints
-			,		( select count(*) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectPoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'LegacyDefect') as LegacyDefectHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectPoints
-			,		( select count(*) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vReleasedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectPoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectHours
 
+			,		( select isnull(sum(wi.TotalHours), 0) from vUnshippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber) as UnshippedHours
 			,		( select (isnull(sum(te.DurationMinutesOverride), 0.0) / 60.0) from dbo.TimeEntries te where te.ReleaseNumber = r.ReleaseNumber) as TotalBilledHours
 
 			from	dbo.Releases r
@@ -193,6 +273,7 @@ create view vReleaseMetrics as
 
 	,		rs.ContingencyPoints as UnusedContingencyPoints
 
+	,		rs.UnshippedHours
 	,		rs.TotalBilledHours
 	,		case 
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0 
@@ -202,5 +283,42 @@ create view vReleaseMetrics as
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0
 				else rs.TotalBilledHours / (rs.ChoreCount + rs.FeatureCount)
 			end as FullyLoadedAvgHoursPerPoint
+	from	ReleaseSummary rs;
+go
 
-	from	ReleaseSummary rs
+-- vTimeEntriesWithWorkAllocationIssues
+if exists(select 1 from sys.views where name='vTimeEntriesWithWorkAllocationIssues' and type='v')
+drop view vTimeEntriesWithWorkAllocationIssues;
+go
+create view vTimeEntriesWithWorkAllocationIssues as 
+	with	
+		TimeEntrySummary as (
+			select	te.id
+			,		te.ReleaseNumber
+			,		te.DatePerformed
+			,		te.UserName
+			,		te.Discipline
+			,		te.ProjectTitleOverride
+			,		te.TaskTitleOverride
+			,		te.NotesOverride
+			,		te.DurationMinutesOverride
+			,		sum(IsNull(wa.DurationMinutes, 0)) as AllocatedMinutes
+			from	dbo.TimeEntries te
+					left outer join dbo.TimeEntryWorkItemAllocations wa on te.Id = wa.TimeEntryId
+			where	te.Ignore = 0
+			group	by te.Id
+			,		te.ReleaseNumber
+			,		te.DatePerformed
+			,		te.UserName
+			,		te.Discipline
+			,		te.ProjectTitleOverride
+			,		te.TaskTitleOverride
+			,		te.NotesOverride
+			,		te.DurationMinutesOverride
+		)
+
+	select	*
+	from	TimeEntrySummary
+	where	AllocatedMinutes != DurationMinutesOverride
+			and Discipline != 'Other'
+go

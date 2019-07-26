@@ -26,6 +26,7 @@ namespace ReleaseMetrics.Core.Releases {
 		public int LegacyDefectCount { get; set; }
 		public decimal LegacyDefectHours { get; set; }
 
+		public decimal UnshippedHours { get; set; }
 		public decimal TotalBilledHours { get; set; }
 
 		public decimal FullyLoadedAvgHoursPerPoint { get; set; }

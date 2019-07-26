@@ -37,12 +37,19 @@ namespace ReleaseMetrics.Api {
 		}
 
 		/// <summary>
-		/// Returns all of the locally-cached time entries for the specified release
+		/// Returns all of the locally-cached time entries for the specified release.
+		/// 
+		/// Returns a JSON array of TimeEntry objects
 		/// </summary>
 		[HttpGet]
 		[Route("GetForRelease")]
-		public async Task<List<TimeEntry>> GetForReleaseAsync(string releaseNum) {
-			return await Task.Run(() => Database.GetTimeEntriesForRelease(releaseNum));
+		public async Task<JsonResult> GetForReleaseAsync(string releaseNum) {
+			var entries = await Task.Run(() => Database.GetTimeEntriesForRelease(releaseNum));
+
+			// the serialization is taking longer than I'd like. Trying Jil b/c it's optimized for performance. Have seen only 
+			// marginal improvements, but marginal is better than nothing
+			//return Jil.JSON.Serialize(entries, Jil.Options.ISO8601PrettyPrintCamelCase);
+			return new JsonResult(entries);
 		}
 
 		/// <summary>

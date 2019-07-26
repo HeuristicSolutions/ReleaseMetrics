@@ -45,7 +45,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 				// for the purposes of running metrics, anything that's in process is counted as "shipped". That's because the stories sometimes
 				// linger in the final stages of the flow at the end of a release, and we want to be able to run metrics without waiting for 
 				// everything to be fully in "done done"
-				case "ARCHIVED":
+				case "ARCHIVED":				
 				case "CODE REVIEW":
 				case "DEVELOPMENT":
 				case "DEVELOPMENT DONE":
