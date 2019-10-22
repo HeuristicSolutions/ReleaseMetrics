@@ -16,7 +16,7 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 	public class JiraApiProxy {
 
 		public static string JIRA_API_HOST = "https://heuristicsolutions.atlassian.net";
-		public static int JIRA_MAX_RESULTS = 200;
+		public static int JIRA_MAX_RESULTS = 100;	// DO NOT INCREASE; Jira only accepts a max of 100
 
 		public string ApiUsername { get; set; }
 		public string ApiToken { get; set; }
@@ -40,24 +40,39 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 		/// Returns a list of all stories flagged with the specified "fix version" in Jira.
 		/// </summary>
 		public async Task<List<JiraStory>> GetStoriesInReleaseAsync(string releaseNum) {
-			var json = await GetJiraSearchResultJsonAsync("fixversion=" + HttpUtility.UrlEncode(releaseNum));
+			var hasMorePages = true;
+			var startAt = 0;
+			var perPage = JIRA_MAX_RESULTS;
 
-			try {
-				var payload = JsonConvert.DeserializeObject<JiraSearchApiResponse>(json);
-				var allStories = payload.Issues;
+			var allStories = new List<JiraStory>();
 
-				// make sure we're counting everything
-				if (payload.TotalResults == payload.MaxResults) {
-					throw new Exception("Total results == max results. Make sure nothing is being excluded!");
+			while (hasMorePages) {
+				string json = null;
+				try {
+					json = await GetJiraSearchResultJsonAsync("fixversion=" + HttpUtility.UrlEncode(releaseNum), startAt: startAt);
+					var payload = JsonConvert.DeserializeObject<JiraSearchApiResponse>(json);
+					var storiesInPayload = payload.Issues;
+
+					// make sure we're counting everything
+					if (payload.MaxResults > perPage) {
+						throw new Exception($"Requested page size of {perPage}, but a limit of {payload.MaxResults} was applied instead.");
+					}
+
+					allStories.AddRange(
+						storiesInPayload
+							.Select(x => new JiraStory(x))
+							.ToList()
+					);
+
+					hasMorePages = payload.TotalResults > (startAt + perPage);
+					startAt += perPage;
 				}
+				catch (JsonSerializationException ex) {
+					throw new ApplicationException("Error processing this response: " + json, ex);
+				}
+			}
 
-				return allStories
-					.Select(x => new JiraStory(x))
-					.ToList();
-			}
-			catch (JsonSerializationException ex) {
-				throw new ApplicationException("Error processing this response: " + json, ex);
-			}
+			return allStories;
 		}
 
 		/// <summary>
@@ -100,14 +115,14 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 		/// <summary>
 		/// Performs a Jira API story search and returns the raw JSON returned by the endpoint.
 		/// </summary>
-		public async Task<string> GetJiraSearchResultJsonAsync(string urlEncodedQuery) {
+		public async Task<string> GetJiraSearchResultJsonAsync(string urlEncodedQuery, int startAt = 0) {
 			var client = new RestClient(JIRA_API_HOST);
 
 			// To find ID of custom fields: https://confluence.atlassian.com/jirakb/how-to-find-id-for-custom-field-s-744522503.html
 			// customfield_10018 = Epic Link
 			// customfield_10022 = Story Points
 			// customfield_10843 = Defect Type
-			var request = new RestRequest($"rest/api/2/search?jql={urlEncodedQuery}&maxResults={JIRA_MAX_RESULTS}&fields=id,key,status,epic,fixVersions,issuetype,summary,labels,customfield_10022,customfield_10018,customfield_10843", Method.GET);
+			var request = new RestRequest($"rest/api/2/search?jql={urlEncodedQuery}&maxResults={JIRA_MAX_RESULTS}&startAt={startAt}&fields=id,key,status,epic,fixVersions,issuetype,summary,labels,customfield_10022,customfield_10018,customfield_10843", Method.GET);
 			request.AddHeader("Authorization", this.ApiAuthHeader);
 			request.RequestFormat = DataFormat.Json;
 

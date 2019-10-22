@@ -237,7 +237,6 @@ create view vReleaseMetrics as
 
 			,		( select isnull(sum(wi.TotalHours), 0) from vUnshippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber) as UnshippedHours
 			,		( select (isnull(sum(te.DurationMinutesOverride), 0.0) / 60.0) from dbo.TimeEntries te where te.ReleaseNumber = r.ReleaseNumber) as TotalBilledHours
-
 			from	dbo.Releases r
 		)
 
@@ -276,6 +275,10 @@ create view vReleaseMetrics as
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0 
 				else (rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) / (rs.ChorePoints + rs.FeaturePoints)
 			end as AvgHoursPerFeatureAndChorePoint
+	,		case 
+				when (rs.LegacyDefectCount = 0) then 0 
+				else (rs.LegacyDefectHours / rs.LegacyDefectCount)
+			end as AvgHoursPerLegacyDefect
 	,		case 
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0
 				else rs.TotalBilledHours / (rs.ChoreCount + rs.FeatureCount)

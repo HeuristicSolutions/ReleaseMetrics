@@ -21,6 +21,12 @@
 
 	th.group-header { text-align: center; }
 	th.group-divider, td.group-divider { border-right: 1px solid #ddd; }
+	td.group-total { font-weight: bold; }
+
+	/* HACK: want to allow the content area to grow because we have a wide table */
+	@@media only screen and (min-width : 1400px) {
+		.container { width: 1500px; } 
+	}
 </style>
 
 <div id="app">
@@ -43,20 +49,35 @@
 			<thead>
 				<tr>
 					<th scope="col" rowspan="2" class="group-header group-divider">Release</th>
-					<th scope="col" colspan="4" class="group-header group-divider">Shipped Stories</th>
-					<th scope="col" colspan="2" class="group-header group-divider">Legacy Defects Fixed</th>
+					<th scope="col" colspan="3" class="group-header group-divider">Shipped Stories</th>
+					<th scope="col" colspan="3" class="group-header group-divider">Legacy Defects Fixed</th>
 					<th scope="col" colspan="2" class="group-header group-divider">Not Shipped</th>
+					<th scope="col" colspan="5" class="group-header group-divider">Overall Hours</th>
 					<th scope="col" colspan="3" class="group-header group-divider">Accuracy</th>
 				</tr>
 				<tr>
+					<!-- shipped stories -->
 					<th scope="col">Points</th>
 					<th scope="col">Hours</th>
 					<th scope="col">Hrs / Pt</th>
-					<th scope="col" class="group-divider">"Fully Loaded"<br />Hrs / Pt</th>
+
+					<!-- legacy defect -->
 					<th scope="col">Count</th>
-					<th scope="col" class="group-divider">Total Hours</th>
+					<th scope="col">Total Hours</th>
+					<th scope="col" class="group-divider">Avg Hrs</th>
+
+					<!-- not shipped -->
 					<th scope="col">Unused<br />Contingency</th>
 					<th scope="col" class="group-divider">Hours on<br />Undelivered</th>
+
+					<!-- proportions -->
+					<th scope="col">Chores</th>
+					<th scope="col">Stories</th>
+					<th scope="col">Defects</th>
+					<th scope="col">Other</th>
+					<th scope="col" class="group-divider">"Fully Loaded"<br />Hrs / Pt</th>
+
+					<!-- accuracy -->
 					<th scope="col">Planned<br />Points</th>
 					<th scope="col">Unplanned<br />Points</th>
 					<th scope="col">Ratio</th>
@@ -64,7 +85,7 @@
 			</thead>
 			<tbody>
 				<tr v-if="isInitialized === false">
-					<td colspan="12" class="text-center">
+					<td colspan="16" class="text-center">
 						... loading ...
 					</td>
 				</tr>
@@ -79,6 +100,8 @@
 								<i class="fas fa-check-double icon-toggle" title="Check for validation errors in the time entry data for this release" style="color: #6d99ff" data-toggle="modal" data-target="#validateReleaseConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
 							</div>
 						</th>
+
+						<!-- shipped stories -->
 						<td>
 							{{ release.shippedFeatureAndChorePoints }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Jira data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#jiraSyncConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
@@ -87,18 +110,31 @@
 							{{ release.shippedFeatureAndChoreHours | twoDecimalPts }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Mavenlink data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" v-on:click="alert('Not implemented')"></i>
 						</td>
-						<td><b>{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</b></td>
-						<td class="group-divider"><b>{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</b></td>
+						<td class="group-divider group-total">{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</td>
+
+						<!-- legacy defects -->
 						<td>{{ release.legacyDefectCount}} </td>
-						<td class="group-divider">{{ release.legacyDefectHours | twoDecimalPts }}</td>
+						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
+						<td class="group-divider group-total">{{ release.avgHoursPerLegacyDefect | twoDecimalPts }}</td>
+
+						<!-- unshipped -->
 						<td>{{ release.unusedContingencyPoints }}</td>
 						<td class="group-divider">{{ release.unshippedHours | twoDecimalPts }}</td>
+
+						<!-- proportions -->
+						<td>{{ release.choreHours | twoDecimalPts }}</td>
+						<td>{{ release.featureHours + release.newDefectHours | twoDecimalPts }}</td>
+						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
+						<td>{{ release.totalBilledHours - (release.choreHours + release.featureHours + release.newDefectHours + release.legacyDefectHours) | twoDecimalPts }}</td>
+						<td class="group-divider group-total">{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</td>
+
+						<!-- accuracy -->
 						<td>TODO</td>
 						<td>TODO</td>
 						<td class="group-divider">TODO</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="10">
+						<td colspan="15">
 							<div v-show="release.loadingMessage == ''">
 								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}
 								&nbsp;&nbsp;<span class="release-duration">{{ release.weeksInRelease }} weeks</span>
