@@ -72,13 +72,18 @@ namespace ReleaseMetrics.Core.TimeEntries {
 					// Billing time to a story not associated with the release is a warning; the time will be counted towards
 					// the "undelivered" category and will not affect the metrics
 					if (!jiraStory.FixVersions.Contains(release.ReleaseNumber)) { 
-						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is not tagged to release {release.ReleaseNumber}. Time will be counted towards 'undelivered'.");
+						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is not tagged to release {release.ReleaseNumber} and has status '{jiraStory.Status}'. Time will be counted towards 'undelivered'.");
 					}
 
 					var workItemType = JiraHelper.GetWorkItemType(jiraStory);
 					var isEpic = (workItemType == WorkItemTypeEnum.Epic);
 					var isDeclined = jiraStory.Status.EqualsIgnoringCase("Declined");
 					var isContingency = (workItemType == WorkItemTypeEnum.Contingency);
+					var isFeatureRequest = (workItemType == WorkItemTypeEnum.FeatureRequest);
+
+					if (isFeatureRequest) {
+						warnings.Add($"'{jiraStoryId}' is a Feature Request; Feature Requests should not be billed as development, they should either be billed to a specific analysis ticket or to Unplanned Analysis.");
+					}
 
 					if (isDeclined) {
 						warnings.Add($"Jira {jiraStory.IssueType} '{jiraStoryId}' is marked as 'DECLINED'. Time will be tracked towards 'undelivered'.");

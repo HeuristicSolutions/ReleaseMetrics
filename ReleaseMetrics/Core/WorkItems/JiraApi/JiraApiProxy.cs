@@ -61,6 +61,7 @@ namespace ReleaseMetrics.Core.WorkItems.JiraApi {
 					allStories.AddRange(
 						storiesInPayload
 							.Select(x => new JiraStory(x))
+							.Where(x => x.IssueType != "Feature Request")
 							.ToList()
 					);
 

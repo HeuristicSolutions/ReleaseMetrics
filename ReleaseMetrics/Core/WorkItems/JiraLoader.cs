@@ -53,6 +53,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 					continue;
 				}
 				else if (effectiveMajorRelease != releaseNum) {
+					// TODO: we sometimes map epics to multiple releases if they span the release; what should we do about that?
 					messages.Add(
 						new ResultMsg($"{story.Id} is mapped to {releaseNum}, but its primary major release is {effectiveMajorRelease}. Jira stories should only be tracked to a single major release version. Skipping the local update for this release.", MessageType.Warning)
 					);

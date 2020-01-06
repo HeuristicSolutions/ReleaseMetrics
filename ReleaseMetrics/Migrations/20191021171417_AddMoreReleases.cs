@@ -21,7 +21,12 @@ namespace ReleaseMetrics.Migrations
 			migrationBuilder.InsertData(
 				table: "Releases",
 				columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
-				values: new object[] { "9.10.0", new DateTime(2019, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "NBCE Phase 2 (Offerings), NGLP release candidate, 508 Compliance", new DateTime(2019, 7, 8, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+				values: new object[] { "9.10.0", new DateTime(2019, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "NBCE Phase 2 (Offerings), NGLP alpha, 508 Compliance", new DateTime(2019, 7, 8, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+			migrationBuilder.InsertData(
+				table: "Releases",
+				columns: new[] { "ReleaseNumber", "EndDate", "Notes", "StartDate" },
+				values: new object[] { "10.0.0", new DateTime(2019, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), "NGLP RC1 for CARNA", new DateTime(2019, 10, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 		}
 
 		protected override void Down(MigrationBuilder migrationBuilder)

@@ -49,6 +49,23 @@ namespace ReleaseMetrics.Core.DataModel {
 		/// shouldn't be any time billed directly to these cases. Contingency cases with points > 0 indicate that we
 		/// shipped a planned scope of work with less-than-estimated complexity.
 		/// </summary>
-		Contingency
+		Contingency,
+
+		/// <summary>
+		/// We have begun counting UI tests as "points" to reflect that they are a discrete item of complexity that
+		/// we didn't use to do, and lumping them in w/ feature points would result in bloating the "hours per point"
+		/// while obscuring that a "point" now contains more "stuff". So, we count them as specific items.
+		/// </summary>
+		UITest,
+
+		/// <summary>
+		/// TODO: Determine how to handle these
+		/// </summary>
+		SubTask,
+
+		/// <summary>
+		/// Feature Requests should count towards "undelivered"; ideally, the time should be billed as analysis.
+		/// </summary>
+		FeatureRequest
 	}
 }
