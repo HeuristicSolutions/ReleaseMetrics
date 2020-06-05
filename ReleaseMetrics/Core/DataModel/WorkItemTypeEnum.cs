@@ -66,6 +66,11 @@ namespace ReleaseMetrics.Core.DataModel {
 		/// <summary>
 		/// Feature Requests should count towards "undelivered"; ideally, the time should be billed as analysis.
 		/// </summary>
-		FeatureRequest
+		FeatureRequest,
+
+		/// <summary>
+		/// Analysis tasks are responsible for creating development tasks
+		/// </summary>
+		Analysis
 	}
 }

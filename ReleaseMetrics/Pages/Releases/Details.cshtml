@@ -323,7 +323,7 @@
 
 					// exit if fail keyword check
 					if (hasKeywordFilter) {
-						var searchableText = t.id + ' ' + t.projectTitle + ' ' + t.taskTitle + ' ' + t.userName + ' ' + t.notes;
+						var searchableText = t.id + ' ' + t.projectTitleOverride + ' ' + t.taskTitleOverride + ' ' + t.userNameOverride + ' ' + t.notesOverride;
 
 						if (searchableText.indexOfIgnoreCase(keywordFilter) === -1) {
 							return false;

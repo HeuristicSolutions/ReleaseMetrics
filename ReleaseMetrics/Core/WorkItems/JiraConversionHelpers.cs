@@ -14,6 +14,7 @@ namespace ReleaseMetrics.Core.WorkItems {
 			var issueType = story.IssueType.ToUpperNullSafe();
 
 			switch (issueType) {
+				case "ANALYSIS": return WorkItemTypeEnum.Analysis;
 				case "ARCHITECTURAL ISSUE": return WorkItemTypeEnum.ArchitecturalIssue;
 				case "CHORE": return WorkItemTypeEnum.Chore;
 				case "CONTINGENCY": return WorkItemTypeEnum.Contingency;
@@ -23,10 +24,11 @@ namespace ReleaseMetrics.Core.WorkItems {
 				case "FEATURE REQUEST": return WorkItemTypeEnum.FeatureRequest;
 				case "STORY": return WorkItemTypeEnum.Feature;
 				case "SUB-TASK": return WorkItemTypeEnum.SubTask;
+				case "TECHNICAL DEBT": return WorkItemTypeEnum.Chore;
 				case "UI TEST": return WorkItemTypeEnum.UITest;
 				case "UI TEST (SUBTASK)": return WorkItemTypeEnum.UITest;
 
-				default: throw new NotImplementedException($"Could not map Jira issue {story.Id} (a '{issueType}') to a work item type");
+				default: throw new NotImplementedException($"Could not map Jira issue {story.Id} ('{issueType}') to a work item type");
 			}
 		}
 

@@ -50,7 +50,7 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 				$"{releaseNum} Unplanned",
 				$"{releaseNum}: Overhead",
 				$"{releaseNum} Overhead",
-				"Defect Resolution",			// need to count time billed to defects as well as stories
+				"Defect Resolution",			// need to count time billed to defects as well as stories;  TODO: What about Defect Triage?
 				"Unplanned Defect Resolution"
 			};
 
@@ -188,7 +188,12 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 		}
 
 		/// <summary>
-		/// Retrieves the user data from the local cache, if found, or else obtains it from the ML user API (and then adds to cache)
+		/// Retrieves the user data from the local cache, if found, or else obtains it from the ML user API (and then adds to cache).
+		/// 
+		/// Returns a dummy user if the related user cannot be found in ML. This isn't supposed to happen, but can happen if an employee's
+		/// account is deleted rather than deactivated.
+		/// 
+		/// Throws an error if > 1 records are found, or other incorrect data is detected.
 		/// </summary>
 		public async Task<MavenlinkUserApiResponse.UserData> GetMavenlinkUserAsync(string userId) {
 			if (!USER_CACHE.ContainsKey(userId)) {
@@ -200,14 +205,22 @@ namespace ReleaseMetrics.Core.TimeEntries.MavenlinkApi {
 				var json = await Task.Run(() => client.Execute(request).Content);
 				var payload = JsonConvert.DeserializeObject<MavenlinkUserApiResponse>(json);
 
-				if (payload.Count != 1) {
-					throw new Exception($"Found {payload.Count} records for user ID {userId}");
+				MavenlinkUserApiResponse.UserData user;
+
+				if (payload.Count == 0) {
+					// might be that the user account was deleted in ML. Not supposed to happen, but did happen for Rajiv
+					user = new MavenlinkUserApiResponse.UserData { Id = userId, Name = "UNKNOWN USER" };
 				}
+				else if (payload.Count == 1) {
+					user = payload.Users[userId];
 
-				var user = payload.Users[userId];
-
-				if (user.Id != userId) {
-					throw new Exception($"Expected user with ID {userId}, actually is {user.Id}");
+					if (user.Id != userId)
+					{
+						throw new Exception($"Expected user with ID {userId}, actually is {user.Id}");
+					}
+				}
+				else {
+					throw new Exception($"Found {payload.Count} records for user ID {userId}");
 				}
 
 				USER_CACHE.Add(userId, user);

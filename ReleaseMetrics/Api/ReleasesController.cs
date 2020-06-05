@@ -20,7 +20,18 @@ namespace ReleaseMetrics.Api {
 		[HttpGet]
 		[Route("List")]
 		public List<ReleaseSummary> List() {
-			var list = Database.ReleaseSummaries.ToList();
+			var list = Database.ReleaseSummaries.ToList()
+				.Select(x => new { 
+					MajorVer = x.ReleaseNumber.Extract("([0-9]+)\\.[0-9]+\\.[0-9]+").ToInt32(), 
+					MinorVer = x.ReleaseNumber.Extract("[0-9]+\\.([0-9]+)\\.[0-9]+").ToInt32(), 
+					BugfixVer = x.ReleaseNumber.Extract("[0-9]+\\.[0-9]+\\.([0-9]+)").ToInt32(),
+					ReleaseData = x 
+				})
+				.OrderBy(x => x.MajorVer)
+				.ThenBy(x => x.MinorVer)
+				.ThenBy(x => x.BugfixVer)
+				.Select(x => x.ReleaseData)
+				.ToList();
 
 			return list;
 		}

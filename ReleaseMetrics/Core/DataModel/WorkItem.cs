@@ -1,8 +1,10 @@
-﻿using ReleaseMetrics.Core.WorkItems;
+﻿using Heuristics.Library.Extensions;
+using ReleaseMetrics.Core.WorkItems;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace ReleaseMetrics.Core.DataModel {
 
@@ -80,7 +82,25 @@ namespace ReleaseMetrics.Core.DataModel {
 			this.Type = JiraHelper.GetWorkItemType(story);
 			this.StoryPointsOriginal = story.StoryPoints.HasValue ? (int)story.StoryPoints.Value : (int?)null;
 			this.StoryPoints = story.StoryPoints.HasValue ? (int)story.StoryPoints.Value : 0;
-			this.BillToClient = "TODO";
+			this.BillToClient = GetBillToClient(story);
+		}
+
+		private string GetBillToClient(JiraStory story) {
+			if (story.Labels.IsNullOrEmpty()) {
+				return "R&D";
+			}
+
+			var billToLabel = story.Labels
+				.Where(l => l.StartsWithIgnoringCase("BillTo"))
+				.FirstOrDefault();
+
+			var billToClient = billToLabel?.Extract("BillTo(.*)");
+
+			if (billToClient.IsNullOrEmpty() || billToClient.IsInIgnoringCase("RD", "R&D", "Defect", "DefectResolution")) { 
+				return "R&D";
+			}
+
+			return billToClient;
 		}
 	}
 }

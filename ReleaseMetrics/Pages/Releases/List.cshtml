@@ -71,9 +71,10 @@
 					<th scope="col" class="group-divider">Hours on<br />Undelivered</th>
 
 					<!-- proportions -->
+					<th scope="col">Total<br/>Hrs</th>
 					<th scope="col">Chores</th>
-					<th scope="col">Stories</th>
-					<th scope="col">Defects</th>
+					<th scope="col">Stories +<br />New Defects</th>
+					<th scope="col">Legacy Defects</th>
 					<th scope="col">Other</th>
 					<th scope="col" class="group-divider">"Fully Loaded"<br />Hrs / Pt</th>
 
@@ -85,7 +86,7 @@
 			</thead>
 			<tbody>
 				<tr v-if="isInitialized === false">
-					<td colspan="16" class="text-center">
+					<td colspan="17" class="text-center">
 						... loading ...
 					</td>
 				</tr>
@@ -122,6 +123,7 @@
 						<td class="group-divider">{{ release.unshippedHours | twoDecimalPts }}</td>
 
 						<!-- proportions -->
+						<td class="group-total">{{ release.totalBilledHours | twoDecimalPts }} </td>
 						<td>{{ release.choreHours | twoDecimalPts }}</td>
 						<td>{{ release.featureHours + release.newDefectHours | twoDecimalPts }}</td>
 						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
@@ -134,7 +136,7 @@
 						<td class="group-divider">TODO</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="15">
+						<td colspan="16">
 							<div v-show="release.loadingMessage == ''">
 								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}
 								&nbsp;&nbsp;<span class="release-duration">{{ release.weeksInRelease }} weeks</span>

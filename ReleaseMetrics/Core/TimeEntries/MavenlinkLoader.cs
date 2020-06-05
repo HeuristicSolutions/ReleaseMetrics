@@ -132,13 +132,28 @@ namespace ReleaseMetrics.Core.TimeEntries {
 				return newLocalRecord;
 			}
 			else if (mlEntry.MavenlinkUpdatedAt > existingLocalRecord.LocallyUpdatedAt) {
-				// exists locally but ML is newer; replace local copy
-				Database.TimeEntries.Remove(existingLocalRecord);
+				// exists locally but ML is newer; replace local copy.
+				// HACK: EF doesn't give us control over the sequence in which operations are flushed, so a .Remove() followed by .Add() will throw
+				// a PK exception b/c the insert gets executed first. So instead, we just do an update
+				// It would be better to do a drop/create so that we don't have to worry about columns being added in
+				// the future not being part of the update statement
+				existingLocalRecord.ProjectIdOrig = mlEntry.ProjectId;
+				existingLocalRecord.ProjectIdOverride = mlEntry.ProjectId;
+				existingLocalRecord.ProjectTitleOrig = mlEntry.ProjectTitle;
+				existingLocalRecord.ProjectTitleOverride = mlEntry.ProjectTitle;
+				existingLocalRecord.TaskIdOrig = mlEntry.TaskId;
+				existingLocalRecord.TaskIdOverride = mlEntry.TaskId;
+				existingLocalRecord.DatePerformed = mlEntry.DatePerformed;
+				existingLocalRecord.DurationMinutesOrig = mlEntry.DurationMinutes;
+				existingLocalRecord.DurationMinutesOverride = mlEntry.DurationMinutes;
+				existingLocalRecord.NotesOrig = mlEntry.Notes;
+				existingLocalRecord.NotesOverride = mlEntry.Notes;
+				existingLocalRecord.Billable = mlEntry.Billable;
+				existingLocalRecord.SourceRecordCreatedAt = mlEntry.MavenlinkCreatedAt;
+				existingLocalRecord.SourceRecordUpdatedAt = mlEntry.MavenlinkUpdatedAt;
+				existingLocalRecord.LocallyUpdatedAt = DateTime.Now;
 
-				var newLocalRecord = this.CreateTimeEntry(releaseNum, mlEntry);
-				Database.TimeEntries.Add(newLocalRecord);
-
-				return newLocalRecord;
+				return existingLocalRecord;
 			}
 			else if (existingLocalRecord.LocallyUpdatedAt >= mlEntry.MavenlinkUpdatedAt) {
 				// exists locally and local copy was updated more recently; ignore the server record
