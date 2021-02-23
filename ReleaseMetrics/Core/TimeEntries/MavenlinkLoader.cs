@@ -178,9 +178,9 @@ namespace ReleaseMetrics.Core.TimeEntries {
 			if (referencedStoryIds.Count == 0)
 				return;
 
-			var timePerStory = (referencedStoryIds.Count == 0)
-				? timeEntry.DurationMinutesOverride
-				: timeEntry.DurationMinutesOverride / referencedStoryIds.Count;
+			decimal timePerStory = (referencedStoryIds.Count == 0)
+				? (decimal)timeEntry.DurationMinutesOverride
+				: (decimal)((decimal)timeEntry.DurationMinutesOverride / referencedStoryIds.Count);
 
 			var workItemsInLocalCache = Database.WorkItems
 				.Where(x => referencedStoryIds.Contains(x.StoryNumber))

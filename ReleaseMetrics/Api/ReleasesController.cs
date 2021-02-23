@@ -27,9 +27,9 @@ namespace ReleaseMetrics.Api {
 					BugfixVer = x.ReleaseNumber.Extract("[0-9]+\\.[0-9]+\\.([0-9]+)").ToInt32(),
 					ReleaseData = x 
 				})
-				.OrderBy(x => x.MajorVer)
-				.ThenBy(x => x.MinorVer)
-				.ThenBy(x => x.BugfixVer)
+				.OrderByDescending(x => x.MajorVer)
+				.ThenByDescending(x => x.MinorVer)
+				.ThenByDescending(x => x.BugfixVer)
 				.Select(x => x.ReleaseData)
 				.ToList();
 

@@ -15,9 +15,13 @@ ALTER view [dbo].[vReleaseMetrics] as
 			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreCount
 			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'Chore') as ChoreHours
 
-			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature', 'UITest')) as FeaturePoints
-			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature', 'UITest')) as FeatureCount
-			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature', 'UITest')) as FeatureHours
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature')) as FeaturePoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature')) as FeatureCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('Feature')) as FeatureHours
+
+			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('UITest')) as TestPoints
+			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('UITest')) as TestCount
+			,		( select isnull(sum(wi.TotalHours), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type IN ('UITest')) as TestHours
 
 			,		( select isnull(sum(wi.StoryPoints), 0) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectPoints
 			,		( select count(*) from vShippedWorkItemSummary wi where wi.ReleaseNumber = r.ReleaseNumber and wi.Type = 'NewDefect') as NewDefectCount
@@ -50,6 +54,10 @@ ALTER view [dbo].[vReleaseMetrics] as
 	,		rs.FeaturePoints
 	,		rs.FeatureHours
 
+	,		rs.TestCount
+	,		rs.TestPoints
+	,		rs.TestHours
+
 	,		rs.NewDefectCount
 	,		rs.NewDefectPoints
 	,		rs.NewDefectHours
@@ -61,17 +69,17 @@ ALTER view [dbo].[vReleaseMetrics] as
 	,		rs.UnusedContingencyPoints
 	,		rs.ContingencyHours
 
-	,		(rs.ChoreCount + rs.FeatureCount) as ShippedFeatureAndChoreCount
-	,		(rs.ChorePoints + rs.FeaturePoints) as ShippedFeatureAndChorePoints
-	,		(rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) as ShippedFeatureAndChoreHours
+	,		(rs.ChoreCount + rs.FeatureCount + rs.TestCount) as ShippedFeatureAndChoreCount
+	,		(rs.ChorePoints + rs.FeaturePoints + rs.TestPoints) as ShippedFeatureAndChorePoints
+	,		(rs.ChoreHours + rs.FeatureHours + rs.TestHours + rs.NewDefectHours) as ShippedFeatureAndChoreHours
 
 	,		rs.UnshippedHours
 	,		rs.DevTeamTotalOverheadHours
 	,		rs.TotalBilledHours
 	,		case 
-				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0 
-				else (rs.ChoreHours + rs.FeatureHours + rs.NewDefectHours) / (rs.ChorePoints + rs.FeaturePoints)
-			end as AvgHoursPerFeatureAndChorePoint
+				when (rs.ChoreCount = 0 and rs.FeatureCount = 0 and rs.TestCount = 0) then 0 
+				else (rs.ChoreHours + rs.FeatureHours + rs.TestHours + rs.NewDefectHours) / (rs.ChorePoints + rs.FeaturePoints + rs.TestPoints)
+			end as AvgHoursPerPoint
 	,		case 
 				when (rs.LegacyDefectCount = 0) then 0 
 				else (rs.LegacyDefectHours / rs.LegacyDefectCount)
@@ -82,7 +90,7 @@ ALTER view [dbo].[vReleaseMetrics] as
 			end as AvgDevTeamOverheadPerFeatureAndChorePoint
 	,		case 
 				when (rs.ChoreCount = 0 and rs.FeatureCount = 0) then 0
-				else rs.TotalBilledHours / (rs.ChoreCount + rs.FeatureCount)
+				else rs.TotalBilledHours / (rs.ChoreCount + rs.FeatureCount + rs.TestCount)
 			end as FullyLoadedAvgHoursPerPoint
 	from	ReleaseSummary rs;
 GO

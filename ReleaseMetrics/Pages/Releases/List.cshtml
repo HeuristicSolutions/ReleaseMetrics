@@ -52,12 +52,12 @@
 					<th scope="col" colspan="3" class="group-header group-divider">Shipped Stories</th>
 					<th scope="col" colspan="3" class="group-header group-divider">Legacy Defects Fixed</th>
 					<th scope="col" colspan="2" class="group-header group-divider">Not Shipped</th>
-					<th scope="col" colspan="5" class="group-header group-divider">Overall Hours</th>
+					<th scope="col" colspan="7" class="group-header group-divider">Overall Hours</th>
 					<th scope="col" colspan="3" class="group-header group-divider">Accuracy</th>
 				</tr>
 				<tr>
 					<!-- shipped stories -->
-					<th scope="col">Points</th>
+					<th scope="col"><i style="font-size: x-small; white-space: nowrap">story / test</i><br />Points</th>
 					<th scope="col">Hours</th>
 					<th scope="col">Hrs / Pt</th>
 
@@ -71,9 +71,10 @@
 					<th scope="col" class="group-divider">Hours on<br />Undelivered</th>
 
 					<!-- proportions -->
-					<th scope="col">Total<br/>Hrs</th>
+					<th scope="col">Total<br />Hrs</th>
 					<th scope="col">Chores</th>
 					<th scope="col">Stories +<br />New Defects</th>
+					<th scope="col">Tests</th>
 					<th scope="col">Legacy Defects</th>
 					<th scope="col">Other</th>
 					<th scope="col" class="group-divider">"Fully Loaded"<br />Hrs / Pt</th>
@@ -104,14 +105,14 @@
 
 						<!-- shipped stories -->
 						<td>
-							{{ release.shippedFeatureAndChorePoints }}
+							{{ release.featurePoints + release.chorePoints }} / {{ release.testPoints }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Jira data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#jiraSyncConfirmationModal" v-on:click="releaseNumForConfirmationModal = release.releaseNumber"></i>
 						</td>
 						<td>
 							{{ release.shippedFeatureAndChoreHours | twoDecimalPts }}
 							<i class="fas fa-sync icon-toggle" title="Reload all Mavenlink data for this release into the local cache" style="color: #ffb2b2" data-toggle="modal" data-target="#mavenlinkSyncConfirmationModal" v-on:click="alert('Not implemented')"></i>
 						</td>
-						<td class="group-divider group-total">{{ release.avgHoursPerFeatureAndChorePoint | twoDecimalPts }}</td>
+						<td class="group-divider group-total">{{ release.avgHoursPerPoint | twoDecimalPts }}</td>
 
 						<!-- legacy defects -->
 						<td>{{ release.legacyDefectCount}} </td>
@@ -126,8 +127,9 @@
 						<td class="group-total">{{ release.totalBilledHours | twoDecimalPts }} </td>
 						<td>{{ release.choreHours | twoDecimalPts }}</td>
 						<td>{{ release.featureHours + release.newDefectHours | twoDecimalPts }}</td>
+						<td>{{ release.testHours | twoDecimalPts }}</td>
 						<td>{{ release.legacyDefectHours | twoDecimalPts }}</td>
-						<td>{{ release.totalBilledHours - (release.choreHours + release.featureHours + release.newDefectHours + release.legacyDefectHours) | twoDecimalPts }}</td>
+						<td>{{ release.totalBilledHours - (release.choreHours + release.featureHours + release.newDefectHours + release.testHours + release.legacyDefectHours) | twoDecimalPts }}</td>
 						<td class="group-divider group-total">{{ release.fullyLoadedAvgHoursPerPoint | twoDecimalPts }}</td>
 
 						<!-- accuracy -->
@@ -136,7 +138,7 @@
 						<td class="group-divider">TODO</td>
 					</tr>
 					<tr class="release-bottom">
-						<td colspan="16">
+						<td colspan="17">
 							<div v-show="release.loadingMessage == ''">
 								{{ release.startDate | shortDate }} - {{ release.endDate | shortDate }}
 								&nbsp;&nbsp;<span class="release-duration">{{ release.weeksInRelease }} weeks</span>

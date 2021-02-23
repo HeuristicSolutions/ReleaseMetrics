@@ -18,17 +18,28 @@ namespace ReleaseMetrics.Core.Releases {
 		public DateTime EndDate { get; set; }
 		public int WeeksInRelease { get; set; }
 
+		public int ChoreCount { get; set; }
+		public int ChorePoints { get; set; }
 		public decimal ChoreHours { get; set; }
+
+		public int FeatureCount { get; set; }
+		public int FeaturePoints { get; set; }
 		public decimal FeatureHours { get; set; }
+
+		public int TestCount { get; set; }
+		public int TestPoints { get; set; }
+		public decimal TestHours { get; set; }
+
 		public decimal NewDefectHours { get; set; }
 		public decimal LegacyDefectHours { get; set; }
 		public decimal TotalBilledHours { get; set; }
 
-
+		// The "Shipped" totals include chores, features, and tests
 		public int ShippedFeatureAndChoreCount { get; set; }
 		public int ShippedFeatureAndChorePoints { get; set; }
 		public decimal ShippedFeatureAndChoreHours { get; set; }
-		public decimal AvgHoursPerFeatureAndChorePoint { get; set; }
+		
+		public decimal AvgHoursPerPoint { get; set; }
 		
 		public int LegacyDefectCount { get; set; }
 		public decimal AvgHoursPerLegacyDefect { get; set; }
