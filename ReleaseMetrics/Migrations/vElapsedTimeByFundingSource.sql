@@ -2,11 +2,12 @@
 	-- For now, I'm manually updating my local DB copy and keeping this up to date.
 	
 
-ALTER view [dbo].[vFundingSourceByRelease] as 
+ALTER view [dbo].[vElapsedTimeByFundingSource] as 
 
-	with	cteElapsedTime (ReleaseNumber, EndDate, BillTo, TotalMinutes)
+	with	cteElapsedTime (ReleaseNumber, ReleaseNumberSortable, EndDate, BillTo, TotalMinutes)
 	as		(
-				select	r.ReleaseNumber, 
+				select	r.ReleaseNumber,
+						r.ReleaseNumberSortable,
 						r.EndDate, 
 						CASE 
 							WHEN ProjectTitleOverride = 'HS: LB R&D [Internal]' and TaskTitleOverride like '%defect%' then 'Defect'
@@ -17,10 +18,9 @@ ALTER view [dbo].[vFundingSourceByRelease] as
 						inner join vReleaseSummaries r on TimeEntries.ReleaseNumber = r.ReleaseNumber
 	)
 
-	select	ReleaseNumber, BillTo, sum(TotalMinutes) / 60 as TotalHours, EndDate
+	select	ReleaseNumber, ReleaseNumberSortable, BillTo, sum(TotalMinutes) / 60 as TotalHours, EndDate
 	from	cteElapsedTime
-	group	by ReleaseNumber, EndDate, BillTo
-
+	group	by ReleaseNumber, ReleaseNumberSortable, EndDate, BillTo
 GO
 
 
